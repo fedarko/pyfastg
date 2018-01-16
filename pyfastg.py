@@ -83,29 +83,43 @@ def parse_fastg(f):
         new_node = make_Node(node)
         new_node.neighbor_list = [make_Neighbors(x) for x in neighs.split(",")]
         node_list.append(new_node)
+    # # now, filter outthe duplicate nodes by combining the forward and rc hits
+    # new_node_list = []
+    # for node in node_list:
+    #     # if name already in new list, add the neighbors from the reverse
+    #     if node.name in [x.name for x in new_node_list]:
+
     return node_list
 
-def pathfind(node_list, parent, prev_path, prev_length, path_list, thresh=1000):
+def pathfind(node_list, top_parent, parent, prev_path, prev_length, path_list, thresh=1000, found_exit=False):
 # def pathfind(node_list, parent, prev_path, prev_length, path_list, reject_direction_node, thresh=1000):
     """Returns deeper path, or None if path is already in path list
     """
     print("Prev: " + prev_path)
     print("Prev_len: " + str(prev_length))
-    # here we dont check for rc, as checking prev_path prevents backtracking
-    possible_neighbors = [x for x in parent.neighbor_list if  x.name not in prev_path.split(":")]
+    # look for both forward and rc matches
+    parent_opposite_strand = [x for x in node_list if x.name == parent.name and x.reverse_complimented != parent.reverse_complimented][0]
+    poss_f = [x for x in parent.neighbor_list if  x.name not in prev_path.split(":")]
+    poss_rc = [x for x in parent_opposite_strand.neighbor_list if  x.name not in prev_path.split(":")]
+    # this ensures we only get single direction hits from the topmost parent
+    if parent == top_parent:
+        print("THALKJSNHVKAJNVAWE")
+        possible_neighbors = poss_f
+    else:
+        possible_neighbors = poss_f + poss_rc
     print("Poss:" + " ".join([x.name for x in possible_neighbors]))
+
     for node in possible_neighbors:
         # here we assume only one hit
-        next_node = [x for x in node_list if x.name == node.name and x.reverse_complimented == node.reverse_complimented][0]
-        print("Next: " + next_node.name + " RC: " + str(next_node.reverse_complimented))
-        if next_node is None:
-            next
-        terminal = False
-        this_length = prev_length + next_node.length
-        this_path = prev_path + ":" + next_node.name
+        this_node = [x for x in node_list if x.name == node.name and x.reverse_complimented == node.reverse_complimented][0]
+        if this_node.length > 250:
+            found_exit = True
+        print("This: " + this_node.name + " RC: " + str(this_node.reverse_complimented))
+        this_length = prev_length + this_node.length
+        this_path = prev_path + ":" + this_node.name
         # are we outside the zone of flanking similarity? usually 1kb?
-        if this_length >= thresh:
-            terminal = True
+        # and have we hit a decent stretch of sequence? one node longer than 3x a tRNA, or about 270
+        if this_length >= thresh and found_exit:
             if this_path in path_list:
                 pass
             else:
@@ -115,11 +129,14 @@ def pathfind(node_list, parent, prev_path, prev_length, path_list, thresh=1000):
             # further in, further in!
             pathfind(
                 node_list=node_list,
-                parent=next_node,
+                top_parent=top_parent,
+                parent=this_node,
                 prev_path=this_path,
                 prev_length=this_length,
                 path_list=path_list,
+                found_exit=found_exit,
                 thresh=thresh)
+        print("And on to the next one!")
     return path_list
 
 
@@ -128,10 +145,16 @@ if __name__ == "__main__" or True:
     start = [x for x in nodes if x.name == "2" and  x.reverse_complimented ][0]
     print(start)
     print(start.neighbor_list[1])
-    l = pathfind(node_list=nodes, parent=start, prev_path="init", prev_length=0, thresh=1000, path_list=[])
+    l = pathfind(
+        node_list=nodes,
+        top_parent=start,
+        parent=start,
+        prev_path="init",
+        prev_length=0,
+        thresh=1000,
+        path_list=[],
+        found_exit=False)
     print(l)
-    for x in l:
-        print(x)
     # keep_pathfinding = True
     # while keep_pathfinding:
     #     for node in nodes:
