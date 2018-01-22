@@ -1,4 +1,4 @@
-# pyfastg: a python library for building networks from FASTG files
+# pyfastg: a minimal Python library for parsing networks from FASTG files
 
 # Introduction
 FASTG is a format to describe genome assemblies, geared toward accuratly representing the ambiguity resulting from sequencing limitations, ploidy, or ther factors that complicate representation of a seqence as a simple string.  The official spec for the fastg format can be found [here](http://fastg.sourceforge.net/).
