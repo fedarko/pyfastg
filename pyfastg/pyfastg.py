@@ -71,7 +71,8 @@ def parse_fastg(f):
     with open(f, "r") as graph_file:
         for line in graph_file:
             if line.startswith(">"):
-                colons = sum([1 for x in line if x == ":"])
+                line_no_sc = line.strip().strip(";")
+                colons = sum([1 for x in line_no_sc if x == ":"])
                 if colons > 1:
                     raise ValueError(
                         "multiple ':'s found in line, and can only "
@@ -80,9 +81,9 @@ def parse_fastg(f):
                     )
                 elif colons == 0:
                     # orphaned node or terminal node
-                    node_neighs.append([line.strip().split(";")[0], None])
+                    node_neighs.append([line_no_sc, None])
                 else:
-                    node_neighs.append(line.strip().split(":"))
+                    node_neighs.append(line_no_sc.split(":"))
 
     # Convert node_neighs to a NetworkX DiGraph
     digraph = nx.DiGraph()
