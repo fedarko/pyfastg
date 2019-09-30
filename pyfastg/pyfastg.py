@@ -16,7 +16,7 @@ class FASTGNode(object):
 
     def __str__(self):
         return str(
-            "Node: {0}\nLength: {1}\nCoverage: {2}\nReverse_Complemented?: {3}"
+            "Node: {0}\nLength: {1}\nCoverage: {2}\nReverse Complemented?: {3}"
         ).format(
             self.name, self.length, self.cov, str(self.reverse_complemented)
         )
