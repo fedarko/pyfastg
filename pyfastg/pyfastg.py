@@ -1,5 +1,3 @@
-import sys
-import os
 import re
 import networkx as nx
 
@@ -29,7 +27,7 @@ def extract_node_len_cov_rc(node_declaration):
 
     As an example, extract_node_len_cov_rc("EDGE_3_length_100_cov_28.087'")
     should return {"name": "3", "length": 100, "coverage": 28.087, "rc": True}.
-    
+
     Returns
     -------
 
