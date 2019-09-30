@@ -1,4 +1,7 @@
-.PHONY: stylecheck style
+.PHONY: test stylecheck style
+
+test:
+	python3 -B -m pytest pyfastg/tests/ --cov
 
 stylecheck:
 	flake8 pyfastg
