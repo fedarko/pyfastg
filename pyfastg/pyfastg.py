@@ -1,79 +1,74 @@
 import sys
 import os
 import re
+import networkx as nx
 
 
-class FastgNode(object):
-    def __init__(
-        self,
-        name=None,
-        length=None,
-        cov=None,
-        reverse_complimented=None,
-        neighbor_list=None,
-    ):
-        self.name = name
+class FASTGNode(object):
+    """Simple class that stores information about a node in the graph."""
+    def __init__(self, name, length, cov, reverse_complemented):
+        if reverse_complemented:
+            self.name = name + "-"
+        else:
+            self.name = name + "+"
         self.length = length
         self.cov = cov
-        self.neighbor_list = neighbor_list
-        self.reverse_complimented = reverse_complimented
+        self.reverse_complemented = reverse_complemented
 
     def __str__(self):
         return str(
-            "Node: {0}\nNeighbors: {1}\nLength: {2}\nCoverage: "
-            + "{3}\nReverse_Complimented?: {4}"
+            "Node: {0}\nLength: {1}\nCoverage: {2}\nReverse_Complemented?: {3}"
         ).format(
             self.name,
-            "None"
-            if self.neighbor_list is None
-            else ",".join([str(x.name) for x in self.neighbor_list]),
-            "None" if self.length is None else self.length,
-            "None" if self.cov is None else self.cov,
-            str(self.reverse_complimented),
+            self.length, self.cov,
+            str(self.reverse_complemented),
         )
 
 
-class FastgNodeNeighbor(object):
-    def __init__(self, name=None, reverse_complimented=None):
-        self.name = name
-        self.reverse_complimented = reverse_complimented
+def extract_node_len_cov_rc(node_declaration):
+    """Returns four specific attributes of a FASTG node declaration.
 
-    def __str__(self):
-        return "NeighborNode: {0}\nReverse_Complimented?: {1}".format(
-            self.name, "Yes" if self.reverse_complimented else "No"
-        )
+    As an example, extract_node_len_cov_rc("EDGE_3_length_100_cov_28.087'")
+    should return {"name": "3", "length": 100, "coverage": 28.087, "rc": True}.
+    
+    Returns
+    -------
 
-
-def extract_node_len_cov_rc(node_name):
+    dict
+        A mapping of "name", "length", "coverage", and "rc" to the
+        corresponding node attributes. The "name" value should be a str,
+        the "length" value should be an int, the "coverage" value should be a
+        float, and the "rc" value should be a bool.
+    """
     rc = False
-    if node_name.endswith("'"):
+    if node_declaration.endswith("'"):
         rc = True
-        node_name = node_name[0:-1]
+        node_declaration = node_declaration[0:-1]
     p = re.compile(
         r"EDGE_(?P<node>\d*?)_length_(?P<length>\d*?)_cov_(?P<cov>[\d|\.]*)"
     )
-    m = p.search(node_name)
-    return (m.group("node"), int(m.group("length")), float(m.group("cov")), rc)
+    m = p.search(node_declaration)
+    return {"name": m.group("node"), "length": int(m.group("length")),
+            "coverage": float(m.group("cov")), "rc": rc}
 
 
-def make_Node(name):
-    node_name, length, cov, rc = extract_node_len_cov_rc(name)
-    new_node = FastgNode(
-        name=node_name, length=length, cov=cov, reverse_complimented=rc
+def make_node(declaration):
+    attrs = extract_node_len_cov_rc(declaration)
+    return FASTGNode(
+        attrs["name"], attrs["length"], attrs["coverage"], attrs["rc"]
     )
-    return new_node
-
-
-def make_Neighbors(neighbor):
-    node_name, length, cov, rc = extract_node_len_cov_rc(neighbor)
-    new_neigh = FastgNodeNeighbor(name=node_name, reverse_complimented=rc)
-    return new_neigh
 
 
 def parse_fastg(f):
+    # This is a 2-D list where each entry in the list corresponds to
+    # [starting node name, either None or a comma-separated list of node names]
+    # The second entry indicates the nodes that the starting node name has an
+    # outgoing edge to.
+    # A TODO here is storing node sequence information -- or at least recording
+    # GC content, etc.
     node_neighs = []
-    with open(f, "r") as inf:
-        for line in inf:
+    with open(f, "r") as graph_file:
+        for line in graph_file:
             if line.startswith(">"):
                 colons = sum([1 for x in line if x == ":"])
                 if colons > 1:
@@ -88,15 +83,19 @@ def parse_fastg(f):
                 else:
                     node_neighs.append(line.strip().split(":"))
 
-    node_list = []
+    # Convert node_neighs to a NetworkX DiGraph
+    digraph = nx.DiGraph()
     for node, neighs in node_neighs:
-        new_node = make_Node(node)
-        if neighs is None:
-            new_node.neighbor_list = None
-        else:
-            new_node.neighbor_list = [
-                make_Neighbors(x) for x in neighs.split(",")
-            ]
-        node_list.append(new_node)
+        node_obj = make_node(node)
+        # We don't bother storing the reverse_complemented FASTGNode attribute
+        # since that information is now encoded in the node name (if it ends in
+        # "+" it's not reverse-complemented; if it ends in "-" then it is)
+        digraph.add_node(
+            node_obj.name, length=node_obj.length, coverage=node_obj.cov
+        )
+        if neighs is not None:
+            for outgoing_neighbor_node in neighs.split(","):
+                neighbor_node_obj = make_node(outgoing_neighbor_node)
+                digraph.add_edge(node_obj.name, neighbor_node_obj.name)
 
-    return node_list
+    return digraph
