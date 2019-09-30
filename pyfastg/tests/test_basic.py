@@ -1,5 +1,6 @@
 from pyfastg import parse_fastg
 
+
 def test_parse_simple_assembly_graph():
     digraph = parse_fastg("pyfastg/tests/input/assembly_graph.fastg")
     assert len(digraph.nodes) == 66

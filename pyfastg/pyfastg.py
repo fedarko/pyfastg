@@ -6,6 +6,7 @@ import networkx as nx
 
 class FASTGNode(object):
     """Simple class that stores information about a node in the graph."""
+
     def __init__(self, name, length, cov, reverse_complemented):
         if reverse_complemented:
             self.name = name + "-"
@@ -19,9 +20,7 @@ class FASTGNode(object):
         return str(
             "Node: {0}\nLength: {1}\nCoverage: {2}\nReverse_Complemented?: {3}"
         ).format(
-            self.name,
-            self.length, self.cov,
-            str(self.reverse_complemented),
+            self.name, self.length, self.cov, str(self.reverse_complemented)
         )
 
 
@@ -48,8 +47,12 @@ def extract_node_len_cov_rc(node_declaration):
         r"EDGE_(?P<node>\d*?)_length_(?P<length>\d*?)_cov_(?P<cov>[\d|\.]*)"
     )
     m = p.search(node_declaration)
-    return {"name": m.group("node"), "length": int(m.group("length")),
-            "coverage": float(m.group("cov")), "rc": rc}
+    return {
+        "name": m.group("node"),
+        "length": int(m.group("length")),
+        "coverage": float(m.group("cov")),
+        "rc": rc,
+    }
 
 
 def make_node(declaration):
