@@ -16,9 +16,24 @@ This library is very much in its infancy, so it may be most useful as a starting
 ```python
 >>> import pyfastg
 >>> g = pyfastg.parse_fastg("pyfastg/tests/input/assembly_graph.fastg")
->>> # g is now a NetworkX DiGraph
+>>> # g is now a NetworkX DiGraph! We can do whatever we want with this object.
+>>> # Example: List the nodes in g
 >>> g.nodes()
-NodeView(('1+', '29+', ...))
+NodeView(('1+', '29-', '1-', ..., '32+'))
+>>> # Example: Get details for a single node (length, coverage, and GC-content)
+>>> g.nodes["15+"]
+{'length': 193, 'cov': 6.93966, 'gc': 0.5492227979274611}
+>>> # Example: Get information about the graph's connectivity
+>>> import networkx as nx
+>>> components = list(nx.weakly_connected_components(g))
+>>> for c in components:
+...     print(len(c), "nodes")
+...     print(c)
+...
+33 nodes
+{'8-', '17-', '15+', '30+', '16+', '26-', '25+', '19+', '7+', '23+', '14-', '18-', '10-', '29-', '20-', '27-', '11-', '5-', '3+', '2-', '12-', '13+', '31-', '6+', '1+', '21-', '24-', '32-', '22+', '28+', '4+', '33-', '9-'}
+33 nodes
+{'26+', '29+', '18+', '3-', '2+', '8+', '15-', '24+', '9+', '17+', '27+', '28-', '11+', '6-', '20+', '14+', '19-', '13-', '4-', '21+', '5+', '31+', '22-', '12+', '25-', '30-', '10+', '1-', '7-', '32+', '23-', '33+', '16-'}
 ```
 
 ### Known Limitations
@@ -28,10 +43,11 @@ Due to the way that FASTG handles sequence gaps, ambiguities, etc, we do not att
 
 ### Identified node attributes
 Nodes in the returned `DiGraph` (represented in the FASTG file as `EDGE_`s)
-contain two attribute fields:
+contain three attribute fields:
 
 1. `length`: the length of the node (represented as a python `int`)
-2. `coverage`: the coverage of the noed (represented as a python `float`)
+2. `cov`: the coverage of the node (represented as a python `float`)
+2. `gc`: the GC-content of the node's sequence (represented as a python `float`)
 
 Furthermore, every node's name will end in `-` if the node is a "reverse
-complement", and `+` otherwise.
+complement" (i.e. if its declaration in the FASTG file ends in a `'` character) and `+` otherwise.
