@@ -1,5 +1,6 @@
 from ..pyfastg import FASTGNode
 
+
 def test_fastgnode_basic():
     n = FASTGNode("supercoolnode", 100, 98.9, True)
     assert n.name == "supercoolnode-"
