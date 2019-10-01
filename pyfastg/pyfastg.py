@@ -39,13 +39,15 @@ def extract_node_attrs(node_declaration):
 
 
 def add_node_to_digraph(digraph, node_attrs):
+    for required_attr in ("name", "length", "cov", "seq"):
+        if required_attr not in node_attrs:
+            raise ValueError(
+                "{} not present for all nodes".format(required_attr)
+            )
     if len(node_attrs["seq"]) != node_attrs["length"]:
-        name_to_show_in_msg = "a node"
-        if "name" in node_attrs:
-            name_to_show_in_msg = "node {}".format(node_attrs["name"])
         raise ValueError(
-            "Length given vs. actual sequence length differs for {}".format(
-                name_to_show_in_msg
+            "Length given vs. actual seq. length differs for node {}".format(
+                node_attrs["name"]
             )
         )
     node_gc_content = DNA(node_attrs["seq"]).gc_content()
