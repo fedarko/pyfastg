@@ -36,10 +36,24 @@ NodeView(('1+', '29-', '1-', '6-', '2+', '26+', '27+', '2-', '3+', '4+', '6+', '
 {'26+', '29+', '18+', '3-', '2+', '8+', '15-', '24+', '9+', '17+', '27+', '28-', '11+', '6-', '20+', '14+', '19-', '13-', '4-', '21+', '5+', '31+', '22-', '12+', '25-', '30-', '10+', '1-', '7-', '32+', '23-', '33+', '16-'}
 ```
 
-### Known Limitations
-Currently, pyfastg is hardcoded to parse FASTG files created by the SPAdes assembler. Other valid FASTG files that don't follow the pattern used by SPAdes for contig names are not supported.
+### Required File Format (tl;dr: SPAdes-dialect FASTG files only)
+Currently, pyfastg is hardcoded to parse FASTG files created by the SPAdes assembler. Other valid FASTG files that don't follow the pattern used by SPAdes for node names are not supported.
 
-Due to the way that FASTG handles sequence gaps, ambiguities, etc, we do not attempt to actually parse the sequence that the nodes represent, merely the relationships between the nodes.
+In particular, each node in the file must be declared as
+
+```bash
+>EDGE_1_length_9909_cov_6.94721
+```
+
+The node ID (here, `1`) can contain the characters `a-z`, `A-Z`, and `0-9`.
+
+The node length (here, `9909`) can contain the characters `0-9`.
+
+The node coverage (here, `6.94721`) can contain the characters `0-9` and `.`.
+
+We assume that each node sequence (the line(s) between node declarations)
+consists only of valid DNA characters, as determined by
+[`skbio.DNA`](http://scikit-bio.org/docs/latest/generated/skbio.sequence.DNA.html).
 
 ### Identified node attributes
 Nodes in the returned `DiGraph` (represented in the FASTG file as `EDGE_`s)

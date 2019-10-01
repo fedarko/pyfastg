@@ -23,7 +23,7 @@ def extract_node_attrs(node_declaration):
         rc = True
         node_declaration = node_declaration[0:-1]
     p = re.compile(
-        r"EDGE_(?P<node>\d*?)_length_(?P<length>\d*?)_cov_(?P<cov>[\d|\.]*)"
+        r"EDGE_(?P<node>[a-zA-Z\d]+?)_length_(?P<length>\d+?)_cov_(?P<cov>[\d|\.]+)"
     )
     m = p.search(node_declaration)
     name = m.group("node")
