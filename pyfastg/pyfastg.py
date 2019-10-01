@@ -38,12 +38,18 @@ def extract_node_attrs(node_declaration):
     }
 
 
-def add_node_to_digraph(digraph, node_attrs):
-    for required_attr in ("name", "length", "cov", "seq"):
-        if required_attr not in node_attrs:
+def check_all_attrs_present(
+    attr_mapping, attrs=("name", "length", "cov", "seq")
+):
+    for required_attr in attrs:
+        if required_attr not in attr_mapping:
             raise ValueError(
                 "{} not present for all nodes".format(required_attr)
             )
+
+
+def add_node_to_digraph(digraph, node_attrs):
+    check_all_attrs_present(node_attrs)
     if len(node_attrs["seq"]) != node_attrs["length"]:
         raise ValueError(
             "Length given vs. actual seq. length differs for node {}".format(
@@ -104,5 +110,15 @@ def parse_fastg(f):
     # Account for the last node described at the bottom of the file
     if len(curr_node_attrs) > 0:
         add_node_to_digraph(digraph, curr_node_attrs)
+
+    # Ensure that all nodes referenced in the digraph have the guaranteed
+    # attributes
+    # This could *not* happen if node A has an edge to node B, but node B is
+    # never actually declared in the FASTG file (i.e. we never see a line that
+    # goes ">EDGE_B_..."). This scenario would mean the input graph is invalid.
+    for node_name in digraph.nodes:
+        check_all_attrs_present(
+            digraph.nodes[node_name], attrs=("length", "cov", "gc")
+        )
 
     return digraph
