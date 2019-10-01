@@ -1,3 +1,4 @@
+import pytest
 from pyfastg import parse_fastg
 
 
@@ -49,3 +50,9 @@ def test_parse_small_assembly_graph():
     )
     for e in valid_edges:
         assert e in digraph.edges
+
+
+def test_parse_multicolon_assembly_graph():
+    with pytest.raises(ValueError) as exc_info:
+        parse_fastg("pyfastg/tests/input/multicolon.fastg")
+    assert "multiple ':'s found in line" in str(exc_info.value)
