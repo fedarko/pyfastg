@@ -19,7 +19,7 @@ This library is very much in its infancy, so it may be most useful as a starting
 >>> # g is now a NetworkX DiGraph! We can do whatever we want with this object.
 >>> # Example: List the nodes in g
 >>> g.nodes()
-NodeView(('1+', '29-', '1-', ..., '32+'))
+NodeView(('1+', '29-', '1-', '6-', '2+', '26+', '27+', '2-', '3+', '4+', '6+', '7+', '3-', '33-', '9-', '4-', '5+', '5-', '28+', '7-', '8+', '28-', '9+', '8-', '12-', '10+', '12+', '10-', '24-', '32-', '11+', '30-', '11-', '27-', '19-', '13+', '25+', '31-', '13-', '14+', '14-', '26-', '15+', '15-', '23-', '16+', '16-', '17+', '17-', '19+', '18+', '33+', '18-', '20+', '20-', '22+', '21+', '21-', '22-', '23+', '24+', '25-', '29+', '30+', '31+', '32+'))
 >>> # Example: Get details for a single node (length, coverage, and GC-content)
 >>> g.nodes["15+"]
 {'length': 193, 'cov': 6.93966, 'gc': 0.5492227979274611}
