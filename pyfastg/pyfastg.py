@@ -1,38 +1,19 @@
 import re
 import networkx as nx
+from skbio import DNA
 
 
-class FASTGNode(object):
-    """Simple class that stores information about a node in the graph."""
-
-    def __init__(self, name, length, cov, reverse_complemented):
-        if reverse_complemented:
-            self.name = name + "-"
-        else:
-            self.name = name + "+"
-        self.length = length
-        self.cov = cov
-        self.reverse_complemented = reverse_complemented
-
-    def __str__(self):
-        return str(
-            "Node: {0}\nLength: {1}\nCoverage: {2}\nReverse Complemented?: {3}"
-        ).format(
-            self.name, self.length, self.cov, str(self.reverse_complemented)
-        )
-
-
-def extract_node_len_cov_rc(node_declaration):
+def extract_node_attrs(node_declaration):
     """Returns four specific attributes of a FASTG node declaration.
 
-    As an example, extract_node_len_cov_rc("EDGE_3_length_100_cov_28.087'")
-    should return {"name": "3", "length": 100, "coverage": 28.087, "rc": True}.
+    As an example, extract_node_attrs("EDGE_3_length_100_cov_28.087'")
+    should return {"name": "3-", "length": 100, "coverage": 28.087}.
 
     Returns
     -------
 
     dict
-        A mapping of "name", "length", "coverage", and "rc" to the
+        A mapping of "name", "length", and "coverage" to the corresponding
         corresponding node attributes. The "name" value should be a str,
         the "length" value should be an int, the "coverage" value should be a
         float, and the "rc" value should be a bool.
@@ -45,33 +26,54 @@ def extract_node_len_cov_rc(node_declaration):
         r"EDGE_(?P<node>\d*?)_length_(?P<length>\d*?)_cov_(?P<cov>[\d|\.]*)"
     )
     m = p.search(node_declaration)
+    name = m.group("node")
+    if rc:
+        name += "-"
+    else:
+        name += "+"
     return {
-        "name": m.group("node"),
+        "name": name,
         "length": int(m.group("length")),
         "coverage": float(m.group("cov")),
-        "rc": rc,
     }
 
 
-def make_node(declaration):
-    attrs = extract_node_len_cov_rc(declaration)
-    return FASTGNode(
-        attrs["name"], attrs["length"], attrs["coverage"], attrs["rc"]
+def add_node_to_digraph(digraph, node_attrs, node_sequence):
+    if len(node_sequence) != node_attrs["length"]:
+        name_to_show_in_msg = "a node"
+        if "name" in node_attrs:
+            name_to_show_in_msg = "node {}".format(node_attrs["name"])
+        raise ValueError(
+            "Length given vs. actual length differs for {}".format(
+                name_to_show_in_msg
+            )
+        )
+    node_gc_content = DNA(node_sequence).gc_content()
+    digraph.add_node(
+        node_attrs["name"],
+        length=node_attrs["length"],
+        coverage=node_attrs["coverage"],
+        gc=node_gc_content,
     )
+    if "outgoing_node_names" in node_attrs:
+        for neighbor_node_name in node_attrs["outgoing_node_names"]:
+            digraph.add_edge(node_attrs["name"], neighbor_node_name)
 
 
 def parse_fastg(f):
-    # This is a 2-D list where each entry in the list corresponds to
-    # [starting node name, either None or a comma-separated list of node names]
-    # The second entry indicates the nodes that the starting node name has an
-    # outgoing edge to.
-    # A TODO here is storing node sequence information -- or at least recording
-    # GC content, etc.
-    node_neighs = []
+
+    digraph = nx.DiGraph()
+    curr_node_attrs = {}
+    curr_seq = ""
     with open(f, "r") as graph_file:
         for line in graph_file:
-            if line.startswith(">"):
-                line_no_sc = line.strip().strip(";")
+            stripped_line = line.strip()
+            if stripped_line.startswith(">"):
+                if len(curr_node_attrs) > 0:
+                    add_node_to_digraph(digraph, curr_node_attrs, curr_seq)
+                    curr_node_attrs = {}
+                    curr_seq = ""
+                line_no_sc = stripped_line.strip(";")
                 colons = sum([1 for x in line_no_sc if x == ":"])
                 if colons > 1:
                     raise ValueError(
@@ -81,23 +83,23 @@ def parse_fastg(f):
                     )
                 elif colons == 0:
                     # orphaned node or terminal node
-                    node_neighs.append([line_no_sc, None])
+                    curr_node_attrs = extract_node_attrs(line_no_sc)
                 else:
-                    node_neighs.append(line_no_sc.split(":"))
-
-    # Convert node_neighs to a NetworkX DiGraph
-    digraph = nx.DiGraph()
-    for node, neighs in node_neighs:
-        node_obj = make_node(node)
-        # We don't bother storing the reverse_complemented FASTGNode attribute
-        # since that information is now encoded in the node name (if it ends in
-        # "+" it's not reverse-complemented; if it ends in "-" then it is)
-        digraph.add_node(
-            node_obj.name, length=node_obj.length, coverage=node_obj.cov
-        )
-        if neighs is not None:
-            for outgoing_neighbor_node in neighs.split(","):
-                neighbor_node_obj = make_node(outgoing_neighbor_node)
-                digraph.add_edge(node_obj.name, neighbor_node_obj.name)
+                    # This node has at least one outgoing edge
+                    line_no_sc_split = line_no_sc.split(":")
+                    curr_node_attrs = extract_node_attrs(line_no_sc_split[0])
+                    curr_node_attrs["outgoing_node_names"] = []
+                    for neighbor_decl in line_no_sc_split[1].split(","):
+                        neighbor_name = extract_node_attrs(neighbor_decl)[
+                            "name"
+                        ]
+                        curr_node_attrs["outgoing_node_names"].append(
+                            neighbor_name
+                        )
+            elif len(stripped_line) > 0:
+                curr_seq += stripped_line
+    # Account for the last node described at the bottom of the file
+    if len(curr_node_attrs) > 0:
+        add_node_to_digraph(digraph, curr_node_attrs, curr_seq)
 
     return digraph

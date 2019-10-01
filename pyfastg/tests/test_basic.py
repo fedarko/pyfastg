@@ -7,8 +7,18 @@ def test_parse_medium_assembly_graph():
     assert len(digraph.edges) == 86
     for i in range(1, 34):
         si = str(i)
-        assert si + "+" in digraph.nodes
-        assert si + "-" in digraph.nodes
+        for suffix in ("+", "-"):
+            name = si + suffix
+            assert name in digraph.nodes
+            # As a sanity check, make sure that node 1's attrs were all parsed
+            # successfully
+            # (Ideally we'd do this automatically for large-ish graphs like
+            # this one, but ... that would require writing another FASTG parser
+            # here :)
+            if i == 1:
+                assert digraph.nodes[name]["length"] == 9909
+                assert digraph.nodes[name]["coverage"] == 6.94721
+                assert digraph.nodes[name]["gc"] == 5153 / 9909.0
 
 
 def test_parse_small_assembly_graph():
@@ -17,6 +27,7 @@ def test_parse_small_assembly_graph():
     assert len(digraph.edges) == 8
     i2length = {1: 9, 2: 3, 3: 5}
     i2cov = {1: 4.5, 2: 100, 3: 16.5}
+    i2gc = {1: 5 / 9.0, 2: 2 / 3.0, 3: 3 / 5.0}
     for i in range(1, 4):
         si = str(i)
         for suffix in ("+", "-"):
@@ -24,6 +35,7 @@ def test_parse_small_assembly_graph():
             assert name in digraph.nodes
             assert digraph.nodes[name]["coverage"] == i2cov[i]
             assert digraph.nodes[name]["length"] == i2length[i]
+            assert digraph.nodes[name]["gc"] == i2gc[i]
 
     valid_edges = (
         ("2+", "1+"),
