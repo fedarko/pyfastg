@@ -6,7 +6,7 @@ def test_fastgnode_basic():
     assert n.name == "supercoolnode-"
     assert n.length == 100
     assert n.cov == 98.9
-    assert n.reverse_complemented == True
+    assert n.reverse_complemented is True
 
     n_str = n.__str__().split("\n")
     assert n_str[0] == "Node: supercoolnode-"
