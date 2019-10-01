@@ -54,6 +54,15 @@ The node coverage (here, `6.94721`) can contain the characters `0-9` and `.`.
 We assume that each node sequence (the line(s) between node declarations)
 consists only of valid DNA characters, as determined by
 [`skbio.DNA`](http://scikit-bio.org/docs/latest/generated/skbio.sequence.DNA.html).
+Leading and trailing whitespace in sequence lines will be ignored, so something
+like
+```bash
+    ATC
+
+ G     
+```
+is perfectly valid (however, `ATC G` is not since the inner space, ` `, will be
+considered part of the sequence).
 
 ### Identified node attributes
 Nodes in the returned `DiGraph` (represented in the FASTG file as `EDGE_`s)
