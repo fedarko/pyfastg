@@ -108,8 +108,7 @@ def parse_fastg(f):
                 else:
                     curr_node_attrs["seq"] = stripped_line
     # Account for the last node described at the bottom of the file
-    if len(curr_node_attrs) > 0:
-        add_node_to_digraph(digraph, curr_node_attrs)
+    add_node_to_digraph(digraph, curr_node_attrs)
 
     # Ensure that all nodes referenced in the digraph have the guaranteed
     # attributes
