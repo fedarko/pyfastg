@@ -74,3 +74,8 @@ contain three attribute fields:
 
 Furthermore, every node's name will end in `-` if the node is a "reverse
 complement" (i.e. if its declaration in the FASTG file ends in a `'` character) and `+` otherwise.
+
+### Dependencies
+
+- [NetworkX](https://networkx.github.io)
+- [scikit-bio](http://scikit-bio.org/)
