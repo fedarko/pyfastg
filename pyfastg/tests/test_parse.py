@@ -23,33 +23,39 @@ def test_parse_medium_assembly_graph():
 
 
 def test_parse_small_assembly_graph():
-    digraph = parse_fastg("pyfastg/tests/input/small.fastg")
-    assert len(digraph.nodes) == 6
-    assert len(digraph.edges) == 8
-    i2length = {1: 9, 2: 3, 3: 5}
-    i2cov = {1: 4.5, 2: 100, 3: 16.5}
-    i2gc = {1: 5 / 9.0, 2: 2 / 3.0, 3: 3 / 5.0}
-    for i in range(1, 4):
-        si = str(i)
-        for suffix in ("+", "-"):
-            name = si + suffix
-            assert name in digraph.nodes
-            assert digraph.nodes[name]["cov"] == i2cov[i]
-            assert digraph.nodes[name]["length"] == i2length[i]
-            assert digraph.nodes[name]["gc"] == i2gc[i]
+    """Tests a simple manually-created assembly graph.
 
-    valid_edges = (
-        ("2+", "1+"),
-        ("2+", "3-"),
-        ("2+", "3+"),
-        ("1+", "3-"),
-        ("3-", "2-"),
-        ("3+", "1-"),
-        ("3+", "2-"),
-        ("1-", "2-"),
-    )
-    for e in valid_edges:
-        assert e in digraph.edges
+    Also tests an identical graph that happens to have a bunch of blank lines
+    around the sequences (shouldn't cause a problem).
+    """
+    for fn in ("small", "whitespace_in_seq"):
+        digraph = parse_fastg("pyfastg/tests/input/{}.fastg".format(fn))
+        assert len(digraph.nodes) == 6
+        assert len(digraph.edges) == 8
+        i2length = {1: 9, 2: 3, 3: 5}
+        i2cov = {1: 4.5, 2: 100, 3: 16.5}
+        i2gc = {1: 5 / 9.0, 2: 2 / 3.0, 3: 3 / 5.0}
+        for i in range(1, 4):
+            si = str(i)
+            for suffix in ("+", "-"):
+                name = si + suffix
+                assert name in digraph.nodes
+                assert digraph.nodes[name]["cov"] == i2cov[i]
+                assert digraph.nodes[name]["length"] == i2length[i]
+                assert digraph.nodes[name]["gc"] == i2gc[i]
+
+        valid_edges = (
+            ("2+", "1+"),
+            ("2+", "3-"),
+            ("2+", "3+"),
+            ("1+", "3-"),
+            ("3-", "2-"),
+            ("3+", "1-"),
+            ("3+", "2-"),
+            ("1-", "2-"),
+        )
+        for e in valid_edges:
+            assert e in digraph.edges
 
 
 def test_parse_multicolon_assembly_graph():
