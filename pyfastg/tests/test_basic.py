@@ -17,7 +17,7 @@ def test_parse_medium_assembly_graph():
             # here :)
             if i == 1:
                 assert digraph.nodes[name]["length"] == 9909
-                assert digraph.nodes[name]["coverage"] == 6.94721
+                assert digraph.nodes[name]["cov"] == 6.94721
                 assert digraph.nodes[name]["gc"] == 5153 / 9909.0
 
 
@@ -33,7 +33,7 @@ def test_parse_small_assembly_graph():
         for suffix in ("+", "-"):
             name = si + suffix
             assert name in digraph.nodes
-            assert digraph.nodes[name]["coverage"] == i2cov[i]
+            assert digraph.nodes[name]["cov"] == i2cov[i]
             assert digraph.nodes[name]["length"] == i2length[i]
             assert digraph.nodes[name]["gc"] == i2gc[i]
 

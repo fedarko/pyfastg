@@ -4,18 +4,18 @@ from skbio import DNA
 
 
 def extract_node_attrs(node_declaration):
-    """Returns four specific attributes of a FASTG node declaration.
+    """Returns three specific attributes of a FASTG node declaration.
 
     As an example, extract_node_attrs("EDGE_3_length_100_cov_28.087'")
-    should return {"name": "3-", "length": 100, "coverage": 28.087}.
+    should return {"name": "3-", "length": 100, "cov": 28.087}.
 
     Returns
     -------
 
     dict
-        A mapping of "name", "length", and "coverage" to the corresponding
+        A mapping of "name", "length", and "cov" to the corresponding
         corresponding node attributes. The "name" value should be a str,
-        the "length" value should be an int, the "coverage" value should be a
+        the "length" value should be an int, the "cov" value should be a
         float, and the "rc" value should be a bool.
     """
     rc = False
@@ -34,25 +34,25 @@ def extract_node_attrs(node_declaration):
     return {
         "name": name,
         "length": int(m.group("length")),
-        "coverage": float(m.group("cov")),
+        "cov": float(m.group("cov")),
     }
 
 
-def add_node_to_digraph(digraph, node_attrs, node_sequence):
-    if len(node_sequence) != node_attrs["length"]:
+def add_node_to_digraph(digraph, node_attrs):
+    if len(node_attrs["seq"]) != node_attrs["length"]:
         name_to_show_in_msg = "a node"
         if "name" in node_attrs:
             name_to_show_in_msg = "node {}".format(node_attrs["name"])
         raise ValueError(
-            "Length given vs. actual length differs for {}".format(
+            "Length given vs. actual sequence length differs for {}".format(
                 name_to_show_in_msg
             )
         )
-    node_gc_content = DNA(node_sequence).gc_content()
+    node_gc_content = DNA(node_attrs["seq"]).gc_content()
     digraph.add_node(
         node_attrs["name"],
         length=node_attrs["length"],
-        coverage=node_attrs["coverage"],
+        cov=node_attrs["cov"],
         gc=node_gc_content,
     )
     if "outgoing_node_names" in node_attrs:
@@ -64,15 +64,13 @@ def parse_fastg(f):
 
     digraph = nx.DiGraph()
     curr_node_attrs = {}
-    curr_seq = ""
     with open(f, "r") as graph_file:
         for line in graph_file:
             stripped_line = line.strip()
             if stripped_line.startswith(">"):
                 if len(curr_node_attrs) > 0:
-                    add_node_to_digraph(digraph, curr_node_attrs, curr_seq)
+                    add_node_to_digraph(digraph, curr_node_attrs)
                     curr_node_attrs = {}
-                    curr_seq = ""
                 line_no_sc = stripped_line.strip(";")
                 colons = sum([1 for x in line_no_sc if x == ":"])
                 if colons > 1:
@@ -97,9 +95,12 @@ def parse_fastg(f):
                             neighbor_name
                         )
             elif len(stripped_line) > 0:
-                curr_seq += stripped_line
+                if "seq" in curr_node_attrs:
+                    curr_node_attrs["seq"] += stripped_line
+                else:
+                    curr_node_attrs["seq"] = stripped_line
     # Account for the last node described at the bottom of the file
     if len(curr_node_attrs) > 0:
-        add_node_to_digraph(digraph, curr_node_attrs, curr_seq)
+        add_node_to_digraph(digraph, curr_node_attrs)
 
     return digraph
