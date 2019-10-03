@@ -1,0 +1,12 @@
+language: python
+python:
+    - "3.6"
+    - "3.7"
+install:
+    - pip install -e .[dev]
+script:
+    - make test
+    - make stylecheck
+after_success:
+    - wget -O codecov.sh https://codecov.io/bash
+    - bash codecov.sh -c

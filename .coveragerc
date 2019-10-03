@@ -1,0 +1,6 @@
+[run]
+source = pyfastg/
+branch = True
+omit =
+    pyfastg/tests/*
+    */__init__.py
