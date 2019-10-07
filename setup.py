@@ -14,15 +14,21 @@ classifiers = [s.strip() for s in classes.split("\n") if s]
 
 description = "Minimal Python library for parsing SPAdes FASTG files"
 
+with open("README.md") as f:
+    long_description = f.read()
+
 version = "0.0.0"
 
 setup(
     name="pyfastg",
     version=version,
+    license="MIT",
     description=description,
-    long_description=description,
-    author="Nick Waters",
-    url="https://github.com/nickp60/pyfastg",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    author="Nick Waters, Marcus Fedarko",
+    maintainer="Marcus Fedarko",
+    url="https://github.com/fedarko/pyfastg",
     classifiers=classifiers,
     packages=find_packages(),
     install_requires=["networkx", "scikit-bio"],
