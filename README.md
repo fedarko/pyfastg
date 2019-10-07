@@ -1,7 +1,7 @@
-# pyfastg: a minimal Python library for parsing networks from FASTG files
+# pyfastg: a minimal Python library for parsing networks from SPAdes FASTG files
 
 ## The FASTG file format
-FASTG is a format to describe genome assemblies, geared toward accurately representing the ambiguity resulting from sequencing limitations, ploidy, or ther factors that complicate representation of a seqence as a simple string.  The official spec for the FASTG format can be found [here](http://fastg.sourceforge.net/).
+FASTG is a format to describe genome assemblies, geared toward accurately representing the ambiguity resulting from sequencing limitations, ploidy, or other factors that complicate representation of a seqence as a simple string.  The official spec for the FASTG format can be found [here](http://fastg.sourceforge.net/).
 
 This library parses graphs that follow **a subset of this specification**: in
 particular, it is designed to work with files output by the
