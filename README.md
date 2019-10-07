@@ -1,15 +1,20 @@
 # pyfastg: a minimal Python library for parsing networks from FASTG files
 
 ## The FASTG file format
-FASTG is a format to describe genome assemblies, geared toward accuratly representing the ambiguity resulting from sequencing limitations, ploidy, or ther factors that complicate representation of a seqence as a simple string.  The official spec for the fastg format can be found [here](http://fastg.sourceforge.net/).
+FASTG is a format to describe genome assemblies, geared toward accurately representing the ambiguity resulting from sequencing limitations, ploidy, or ther factors that complicate representation of a seqence as a simple string.  The official spec for the FASTG format can be found [here](http://fastg.sourceforge.net/).
+
+This library parses graphs that follow **a subset of this specification**: in
+particular, it is designed to work with files output by the
+[SPAdes](http://cab.spbu.ru/software/spades/) family of assemblers.
 
 ## pyfastg
 This library contains `parse_fastg()`, a function that accepts as input a path
 to a SPAdes FASTG file. This function parses the structure of the specified
-file, returning a NetworkX `DiGraph` object representing the structure of the
-graph.
+file, returning a [NetworkX](https://networkx.github.io) `DiGraph` object representing
+the structure of the graph.
 
-This library is very much in its infancy, so it may be most useful as a starting point.  Pull requests welcome!
+This library is very much in its infancy, so it may be most useful as a starting point.
+Pull requests welcome!
 
 ### Quick Example
 
@@ -63,6 +68,10 @@ like
 ```
 is perfectly valid (however, `ATC G` is not since the inner space, ` `, will be
 considered part of the sequence).
+
+It is also worth noting that pyfastg **only creates nodes/edges based on those
+observed in the graph**: if your graph only contains nodes 1+, 2+, and 3+, then
+this won't automatically create nodes 1-, 2-, 3-, etc.
 
 ### Identified node attributes
 Nodes in the returned `DiGraph` (represented in the FASTG file as `EDGE_`s)
