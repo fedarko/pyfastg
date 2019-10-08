@@ -170,6 +170,17 @@ def parse_fastg(f):
 
     digraph = nx.DiGraph()
     curr_node_attrs = {}
+
+    # First off, quickly validate the file on an initial pass through
+    # (TODO: extend this to check up front that all IDs and sequences look
+    # valid, etc.?)
+    with open(f, "r") as graph_file:
+        if not graph_file.readline().startswith(">"):
+            raise ValueError(
+                "File doesn't start with a \">\" character. This doesn't seem "
+                "like a FASTG file."
+            )
+
     with open(f, "r") as graph_file:
         for line in graph_file:
             stripped_line = line.strip()

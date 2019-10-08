@@ -62,3 +62,13 @@ def test_parse_multicolon_assembly_graph():
     with pytest.raises(ValueError) as exc_info:
         parse_fastg("pyfastg/tests/input/multicolon.fastg")
     assert "multiple ':'s found in line" in str(exc_info.value)
+
+
+def test_parse_stuff_at_start_assembly_graph():
+    with pytest.raises(ValueError) as exc_info:
+        parse_fastg("pyfastg/tests/input/stuff_at_start.fastg")
+    assert 'File doesn\'t start with a ">" character' in str(exc_info.value)
+
+    with pytest.raises(ValueError) as exc_info:
+        parse_fastg("pyfastg/tests/input/whitespace_at_start.fastg")
+    assert 'File doesn\'t start with a ">" character' in str(exc_info.value)
