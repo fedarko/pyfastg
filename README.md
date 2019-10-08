@@ -3,17 +3,17 @@
 ## The FASTG file format
 FASTG is a format to describe genome assemblies, geared toward accurately representing the ambiguity resulting from sequencing limitations, ploidy, or other factors that complicate representation of a seqence as a simple string.  The official spec for the FASTG format can be found [here](http://fastg.sourceforge.net/).
 
-This library parses graphs that follow **a subset of this specification**: in
+pyfastg parses graphs that follow **a subset of this specification**: in
 particular, it is designed to work with files output by the
 [SPAdes](http://cab.spbu.ru/software/spades/) family of assemblers.
 
 ## pyfastg
-This library contains `parse_fastg()`, a function that accepts as input a path
+pyfastg contains `parse_fastg()`, a function that accepts as input a path
 to a SPAdes FASTG file. This function parses the structure of the specified
 file, returning a [NetworkX](https://networkx.github.io) `DiGraph` object representing
 the structure of the graph.
 
-This library is very much in its infancy, so it may be most useful as a starting point.
+pyfastg is very much in its infancy, so it may be most useful as a starting point.
 Pull requests welcome!
 
 ### Quick Example
@@ -71,7 +71,7 @@ considered part of the sequence).
 
 It is also worth noting that pyfastg **only creates nodes/edges based on those
 observed in the graph**: if your graph only contains nodes 1+, 2+, and 3+, then
-this won't automatically create nodes 1-, 2-, 3-, etc.
+this won't automatically create reverse complement nodes 1-, 2-, 3-, etc.
 
 ### Identified node attributes
 Nodes in the returned `DiGraph` (represented in the FASTG file as `EDGE_`s)
