@@ -58,6 +58,9 @@ def test_basic():
 
     assert "qwerty" in g.nodes
     assert "hamborgar" in g.nodes
+    assert ("ghjasd", "asdf") in g.edges
+    assert ("ghjasd", "qwerty") in g.edges
+    assert ("ghjasd", "hamborgar") in g.edges
     assert g.nodes["hamborgar"]["cov"] == 33.3
     assert g.nodes["hamborgar"]["gc"] == 0
     assert g.nodes["hamborgar"]["length"] == 4
