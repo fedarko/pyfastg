@@ -13,11 +13,11 @@ def extract_node_attrs(node_declaration):
         ----------
 
         node_declaration: str
-            A string tentatively representing a FASTG node declaration (even though
-            it should start with ">EDGE"). We impose some pretty strict criteria on
-            how this declaration can be structured in order to make sure that we
-            get the same amount of information from all nodes in the assembly graph
-            file.
+            A string tentatively representing a FASTG node declaration (even
+            though it should start with ">EDGE"). We impose some pretty strict
+            criteria on how this declaration can be structured in order to make
+            sure that we get the same amount of information from all nodes in
+            the assembly graph file.
 
         Returns
         -------
