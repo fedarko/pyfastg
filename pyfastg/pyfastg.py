@@ -45,7 +45,7 @@ def extract_node_attrs(node_declaration):
     m = p.search(node_declaration)
     if m is None:
         raise ValueError(
-            "Wasn't able to find all info in the node declaration \"{}\". "
+            'Wasn\'t able to find all info in the node declaration "{}". '
             "This assembly graph is likely formatted in a way that pyfastg "
             "does not support."
         )
