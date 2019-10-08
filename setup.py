@@ -28,6 +28,7 @@ setup(
     long_description_content_type="text/markdown",
     author="Nick Waters, Marcus Fedarko",
     maintainer="Marcus Fedarko",
+    maintainer_email="mfedarko@ucsd.edu",
     url="https://github.com/fedarko/pyfastg",
     classifiers=classifiers,
     packages=find_packages(),
