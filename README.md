@@ -1,5 +1,5 @@
 # pyfastg: a minimal Python library for parsing networks from SPAdes FASTG files
-[![Build Status](https://travis-ci.org/fedarko/pyfastg.svg?branch=master)](https://travis-ci.org/fedarko/pyfastg) [![Code Coverage](https://codecov.io/gh/fedarko/pyfastg/branch/master/graph/badge.svg)](https://codecov.io/gh/fedarko/pyfastg)
+[![Build Status](https://travis-ci.org/fedarko/pyfastg.svg?branch=master)](https://travis-ci.org/fedarko/pyfastg) [![Code Coverage](https://codecov.io/gh/fedarko/pyfastg/branch/master/graph/badge.svg)](https://codecov.io/gh/fedarko/pyfastg) ![PyPI](https://img.shields.io/pypi/v/pyfastg)
 
 ## The FASTG file format
 FASTG is a format to describe genome assemblies, geared toward accurately representing the ambiguity resulting from sequencing limitations, ploidy, or other factors that complicate representation of a seqence as a simple string.  The official spec for the FASTG format can be found [here](http://fastg.sourceforge.net/).
@@ -8,7 +8,7 @@ pyfastg parses graphs that follow **a subset of this specification**: in
 particular, it is designed to work with files output by the
 [SPAdes](http://cab.spbu.ru/software/spades/) family of assemblers.
 
-## pyfastg
+## The pyfastg library
 pyfastg contains `parse_fastg()`, a function that accepts as input a path
 to a SPAdes FASTG file. This function parses the structure of the specified
 file, returning a [NetworkX](https://networkx.github.io) `DiGraph` object representing
@@ -17,7 +17,16 @@ the structure of the graph.
 pyfastg is very much in its infancy, so it may be most useful as a starting point.
 Pull requests welcome!
 
+### Installation
+pyfastg can be installed using pip:
+
+```bash
+pip install pyfastg
+```
+
 ### Quick Example
+The second line (which points to one of pyfastg's test assembly graphs)
+assumes that you're located in the root directory of the pyfastg repo.
 
 ```python
 >>> import pyfastg
@@ -89,3 +98,6 @@ complement" (i.e. if its declaration in the FASTG file ends in a `'` character) 
 
 - [NetworkX](https://networkx.github.io)
 - [scikit-bio](http://scikit-bio.org/)
+
+### License
+pyfastg is licensed under the MIT License. See the `LICENSE` file for details.
