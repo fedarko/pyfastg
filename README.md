@@ -100,4 +100,4 @@ complement" (i.e. if its declaration in the FASTG file ends in a `'` character) 
 - [scikit-bio](http://scikit-bio.org/)
 
 ### License
-pyfastg is licensed under the MIT License. See the `LICENSE` file for details.
+pyfastg is licensed under the MIT License. Please see the `LICENSE` file for details.
