@@ -1,5 +1,5 @@
 # pyfastg: a minimal Python library for parsing networks from SPAdes FASTG files
-[![Build Status](https://travis-ci.org/fedarko/pyfastg.svg?branch=master)](https://travis-ci.org/fedarko/pyfastg) [![Code Coverage](https://codecov.io/gh/fedarko/pyfastg/branch/master/graph/badge.svg)](https://codecov.io/gh/fedarko/pyfastg) ![PyPI](https://img.shields.io/pypi/v/pyfastg)
+[![Build Status](https://travis-ci.org/fedarko/pyfastg.svg?branch=master)](https://travis-ci.org/fedarko/pyfastg) [![Code Coverage](https://codecov.io/gh/fedarko/pyfastg/branch/master/graph/badge.svg)](https://codecov.io/gh/fedarko/pyfastg) [![PyPI](https://img.shields.io/pypi/v/pyfastg)](https://pypi.org/project/pyfastg)
 
 ## The FASTG file format
 FASTG is a format to describe genome assemblies, geared toward accurately representing the ambiguity resulting from sequencing limitations, ploidy, or other factors that complicate representation of a seqence as a simple string.  The official spec for the FASTG format can be found [here](http://fastg.sourceforge.net/).
