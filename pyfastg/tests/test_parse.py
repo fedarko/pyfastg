@@ -176,3 +176,13 @@ def test_parse_inconsistent_declarations():
         '"EDGE_1_length_20_cov_5.2", but we just saw '
         '"EDGE_1_length_9_cov_4.5".'
     )
+
+    # This one is fun -- what if a declaration occurs twice on the same line,
+    # but it's inconsistent?
+    with pytest.raises(ValueError) as exc_info:
+        parse_fastg("pyfastg/tests/input/inconsistent_on_same_line.fastg")
+    assert str(exc_info.value) == (
+        "Node 1+ has inconsistent declarations: we already saw "
+        '"EDGE_1_length_20_cov_5.2", but we just saw '
+        '"EDGE_1_length_9_cov_20".'
+    )
