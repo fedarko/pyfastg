@@ -19,10 +19,19 @@ def test_alphabetical_ids():
 
 
 def test_bad_declaration():
+    bd = "EDGE_asdf_length_100_cog_29.087'"
     with pytest.raises(ValueError) as exc_info:
-        extract_node_attrs("EDGE_asdf_length_100_cog_29.087'")
-    assert "Wasn't able to find all info" in str(exc_info.value)
+        extract_node_attrs(bd)
+    assert str(exc_info.value) == (
+        "Wasn't able to find all expected info (edge name, length, coverage) "
+        f'in the declaration "{bd}". Please remember that pyfastg only '
+        "supports SPAdes-dialect FASTG files."
+    )
 
     with pytest.raises(ValueError) as exc_info:
         extract_node_attrs("")
-    assert "Wasn't able to find all info" in str(exc_info.value)
+    assert str(exc_info.value) == (
+        "Wasn't able to find all expected info (edge name, length, coverage) "
+        'in the declaration "". Please remember that pyfastg only '
+        "supports SPAdes-dialect FASTG files."
+    )

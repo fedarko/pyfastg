@@ -38,16 +38,18 @@ def extract_node_attrs(node_declaration):
     rc = False
     if node_declaration.endswith("'"):
         rc = True
-        node_declaration = node_declaration[0:-1]
+        nonrc_declaration = node_declaration[0:-1]
+    else:
+        nonrc_declaration = node_declaration
     p = re.compile(
         r"EDGE_(?P<node>[a-zA-Z\d]+?)_length_(?P<length>\d+?)_cov_(?P<cov>[\d|\.]+)"  # noqa
     )
-    m = p.search(node_declaration)
+    m = p.search(nonrc_declaration)
     if m is None:
         raise ValueError(
-            'Wasn\'t able to find all info in the node declaration "{}". '
-            "This assembly graph is likely formatted in a way that pyfastg "
-            "does not support."
+            "Wasn't able to find all expected info (edge name, length, "
+            f'coverage) in the declaration "{node_declaration}". Please '
+            "remember that pyfastg only supports SPAdes-dialect FASTG files."
         )
     name = m.group("node")
     if rc:
