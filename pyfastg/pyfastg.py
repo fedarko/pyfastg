@@ -47,9 +47,11 @@ def extract_node_attrs(node_declaration):
     m = p.search(nonrc_declaration)
     if m is None:
         raise ValueError(
-            "Wasn't able to find all expected info (edge name, length, "
-            f'coverage) in the declaration "{node_declaration}". Please '
-            "remember that pyfastg only supports SPAdes-dialect FASTG files."
+            (
+                "Wasn't able to find all expected info (edge name, length, "
+                'coverage) in the declaration "{}". Please remember that '
+                "pyfastg only supports SPAdes-dialect FASTG files."
+            ).format(node_declaration)
         )
     name = m.group("node")
     if rc:

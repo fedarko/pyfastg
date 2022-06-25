@@ -24,9 +24,9 @@ def test_bad_declaration():
         extract_node_attrs(bd)
     assert str(exc_info.value) == (
         "Wasn't able to find all expected info (edge name, length, coverage) "
-        f'in the declaration "{bd}". Please remember that pyfastg only '
+        'in the declaration "{}". Please remember that pyfastg only '
         "supports SPAdes-dialect FASTG files."
-    )
+    ).format(bd)
 
     with pytest.raises(ValueError) as exc_info:
         extract_node_attrs("")
