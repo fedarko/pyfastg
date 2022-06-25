@@ -5,9 +5,9 @@
 
 ## The FASTG file format
 FASTG is a format to describe genome assemblies, geared toward accurately representing the ambiguity resulting from sequencing limitations, ploidy, or other factors that complicate representation of a seqence as a simple string.  The official spec for the FASTG format (version 1.00, as of writing)
-can be found [here](http://fastg.sourceforge.net/). The rest of this
-documentation, when it references the FASTG spec, will be referencing this
-document.
+can be found [here](http://fastg.sourceforge.net/). Whenever the rest of this
+documentation mentions "the FASTG spec," this is in reference to this version
+of the spec.
 
 pyfastg parses graphs that follow **a subset of this specification**: in
 particular, it is designed to work with files output by the
