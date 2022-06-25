@@ -80,6 +80,9 @@ The edge ID (here, `1`) can contain the characters `a-z`, `A-Z`, and `0-9`.
 The edge length (here, `9909`) can contain the characters `0-9`.
 
 The edge coverage (here, `6.94721`) can contain the characters `0-9` and `.`.
+(If an edge's coverage contains only these characters but is still invalid
+somehow -- for example, it is something like `1.2.3.4` -- then Python will
+raise an error upon trying to convert this number to a `float`.)
 
 An edge name can optionally end with a `'` character, indicating that
 this edge's reverse complement is being referenced.
