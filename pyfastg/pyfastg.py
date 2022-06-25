@@ -2,46 +2,55 @@ import re
 import networkx as nx
 
 
-def extract_node_attrs(node_declaration):
-    """Returns three specific attributes of a FASTG node declaration.
+def extract_node_attrs(declaration):
+    """Returns three specific attributes of a FASTG edge declaration.
 
     As an example, extract_node_attrs("EDGE_3_length_100_cov_28.087'")
     should return {"name": "3-", "length": 100, "cov": 28.087}.
 
+    The function name might be confusing, sorry. This parses a declared edge in
+    the FASTG file, but we will convert it to a node in the returned NetworkX
+    graph (and arguably "edges" in the FASTG spec are really just nodes,
+    anyway).
+
     Parameters
     ----------
 
-    node_declaration: str
-        A string tentatively representing a FASTG node declaration (even
-        though it should start with ">EDGE"). We impose some pretty strict
-        criteria on how this declaration can be structured in order to make
-        sure that we get the same amount of information from all nodes in
-        the assembly graph file.
+    declaration: str
+        A string tentatively representing a FASTG edge declaration.
+        We impose some pretty strict criteria on how this can be structured in
+        order to make sure that we get the same amount of information from all
+        edges in the assembly graph file.
 
     Returns
     -------
 
     dict
-        A mapping of "name", "length", and "cov" to the corresponding
-        corresponding node attributes. The "name" value should be a str,
-        the "length" value should be an int, the "cov" value should be a
-        float, and the "rc" value should be a bool.
+        A mapping of "name", "length", and "cov" to this edge's attributes.
+        The "name" value will be a str, the "length" value will be an int,
+        and the "cov" value will be a float.
 
     Raises
     ------
+    ValueError
+        If the regular expression we use to retrieve information from a
+        declaration does not match.
 
-    If the regular expression we use to retrieve information from a node
-    declaration does not match the node_declaration, this will raise a
-    ValueError.
+        If trying to parse the length or coverage values from the declaration
+        fails.
     """
     rc = False
-    if node_declaration.endswith("'"):
+    if declaration.endswith("'"):
         rc = True
-        nonrc_declaration = node_declaration[0:-1]
+        nonrc_declaration = declaration[:-1]
     else:
-        nonrc_declaration = node_declaration
+        nonrc_declaration = declaration
+    # Regarding the (?P<name>...) syntax, see
+    # https://docs.python.org/3/library/re.html#index-17. This is a way of
+    # saying "capture this group, and also call it 'name'" -- this makes it
+    # easy to extract the edge name, length, etc. from the declaration.
     p = re.compile(
-        r"EDGE_(?P<node>[a-zA-Z\d]+?)_length_(?P<length>\d+?)_cov_(?P<cov>[\d|\.]+)"  # noqa
+        r"^>?EDGE_(?P<name>[a-zA-Z\d]+?)_length_(?P<length>\d+?)_cov_(?P<cov>[\d\.]+)$"  # noqa
     )
     m = p.search(nonrc_declaration)
     if m is None:
@@ -50,18 +59,19 @@ def extract_node_attrs(node_declaration):
                 "Wasn't able to find all expected info (edge name, length, "
                 'coverage) in the declaration "{}". Please remember that '
                 "pyfastg only supports SPAdes-dialect FASTG files."
-            ).format(node_declaration)
+            ).format(declaration)
         )
-    name = m.group("node")
+    name = m.group("name")
     if rc:
         name += "-"
     else:
         name += "+"
-    return {
-        "name": name,
-        "length": int(m.group("length")),
-        "cov": float(m.group("cov")),
-    }
+
+    # These will trigger errors if the length or coverage are invalid
+    # (e.g. the coverage is just ..... or something silly)
+    slen = int(m.group("length"))
+    scov = float(m.group("cov"))
+    return {"name": name, "length": slen, "cov": scov}
 
 
 def check_all_attrs_present(
