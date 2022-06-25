@@ -138,3 +138,11 @@ def test_parse_no_semicolon():
         'EDGE_2_length_3_cov_100; ATGGGCGAT" must end with a ; character. '
         "(The sequence for this edge should be given on the next line.)"
     )
+
+    with pytest.raises(ValueError) as exc_info:
+        parse_fastg("pyfastg/tests/input/nosc2.fastg")
+    assert str(exc_info.value) == (
+        'The edge declaration line ">EDGE_1_length_9_cov_4.5\'" '
+        "must end with a ; character. "
+        "(The sequence for this edge should be given on the next line.)"
+    )
