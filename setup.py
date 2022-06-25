@@ -17,7 +17,7 @@ description = "Minimal Python library for parsing SPAdes FASTG files"
 with open("README.md") as f:
     long_description = f.read()
 
-version = "0.0.0"
+version = "0.1.0"
 
 setup(
     name="pyfastg",
