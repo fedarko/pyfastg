@@ -61,7 +61,15 @@ def test_parse_small_assembly_graph():
 def test_parse_multicolon_assembly_graph():
     with pytest.raises(ValueError) as exc_info:
         parse_fastg("pyfastg/tests/input/multicolon.fastg")
-    assert "multiple ':'s found in line" in str(exc_info.value)
+    first_bad_line = (
+        ">EDGE_1_length_9_cov_4.5:EDGE_3_length_5_cov_16.5':"
+        "EDGE_2_length_3_cov_100;"
+    )
+    assert str(exc_info.value) == (
+        'Multiple ":" characters found in line "{}". An edge line can only '
+        'have exactly 0 or 1 ":" characters; pyfastg doesn\'t support FASTG '
+        '"properties" yet.'
+    ).format(first_bad_line)
 
 
 def test_parse_stuff_at_start_assembly_graph():

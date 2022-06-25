@@ -196,9 +196,12 @@ def parse_fastg(f):
                 colons = sum([1 for x in line_no_sc if x == ":"])
                 if colons > 1:
                     raise ValueError(
-                        "multiple ':'s found in line, and can only "
-                        + "be used to separate nodes from neighbor "
-                        + "list\n"
+                        (
+                            'Multiple ":" characters found in line "{}". An '
+                            'edge line can only have exactly 0 or 1 ":" '
+                            "characters; pyfastg doesn't support FASTG "
+                            '"properties" yet.'
+                        ).format(stripped_line)
                     )
                 elif colons == 0:
                     # orphaned node or terminal node
