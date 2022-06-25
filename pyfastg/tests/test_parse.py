@@ -58,7 +58,7 @@ def test_parse_small_assembly_graph():
             assert e in digraph.edges
 
 
-def test_parse_multicolon_assembly_graph():
+def test_parse_multicolon():
     with pytest.raises(ValueError) as exc_info:
         parse_fastg("pyfastg/tests/input/multicolon.fastg")
     first_bad_line = (
@@ -72,7 +72,7 @@ def test_parse_multicolon_assembly_graph():
     ).format(first_bad_line)
 
 
-def test_parse_stuff_at_start_assembly_graph():
+def test_parse_stuff_at_start():
     with pytest.raises(ValueError) as exc_info:
         parse_fastg("pyfastg/tests/input/stuff_at_start.fastg")
     assert 'File doesn\'t start with a ">" character' in str(exc_info.value)
@@ -82,7 +82,7 @@ def test_parse_stuff_at_start_assembly_graph():
     assert 'File doesn\'t start with a ">" character' in str(exc_info.value)
 
 
-def test_parse_no_rc_assembly_graph():
+def test_parse_no_rc():
     """Tests a graph where 1+ -> 3-, but not 3+ -> 1-, exists.
 
     Ensures that this second edge isn't automatically created.
@@ -101,7 +101,7 @@ def test_parse_no_rc_assembly_graph():
     assert ("1-", "2+") in digraph.edges
 
 
-def test_parse_no_seq_assembly_graph():
+def test_parse_no_seq():
     """Tests a graph where an edge isn't defined.
 
     This is kind of like an integration test that verifies that the
@@ -112,7 +112,7 @@ def test_parse_no_seq_assembly_graph():
     assert str(exc_info.value) == "length not present for all edges"
 
 
-def test_parse_bad_len_assembly_graph():
+def test_parse_bad_len():
     """Tests a graph where the sequence length != the declared length.
 
     This is kind of like an integration test that verifies that the
@@ -122,4 +122,19 @@ def test_parse_bad_len_assembly_graph():
         parse_fastg("pyfastg/tests/input/bad_len.fastg")
     assert str(exc_info.value) == (
         "Length given vs. actual seq. length differs for edge 1-"
+    )
+
+
+def test_parse_no_semicolon():
+    """Tests a graph where the edge declaration and seq are on the same line.
+
+    Technically allowed by the FASTG spec, but unsupported by us, for the very
+    well-thought-out reason of "I don't want to refactor this code."
+    """
+    with pytest.raises(ValueError) as exc_info:
+        parse_fastg("pyfastg/tests/input/nosc.fastg")
+    assert str(exc_info.value) == (
+        "The edge declaration line \">EDGE_1_length_9_cov_4.5':"
+        'EDGE_2_length_3_cov_100; ATGGGCGAT" must end with a ; character. '
+        "(The sequence for this edge should be given on the next line.)"
     )

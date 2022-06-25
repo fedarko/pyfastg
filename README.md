@@ -4,7 +4,10 @@
 [![PyPI](https://img.shields.io/pypi/v/pyfastg)](https://pypi.org/project/pyfastg)
 
 ## The FASTG file format
-FASTG is a format to describe genome assemblies, geared toward accurately representing the ambiguity resulting from sequencing limitations, ploidy, or other factors that complicate representation of a seqence as a simple string.  The official spec for the FASTG format can be found [here](http://fastg.sourceforge.net/).
+FASTG is a format to describe genome assemblies, geared toward accurately representing the ambiguity resulting from sequencing limitations, ploidy, or other factors that complicate representation of a seqence as a simple string.  The official spec for the FASTG format (version 1.00, as of writing)
+can be found [here](http://fastg.sourceforge.net/). The rest of this
+documentation, when it references the FASTG spec, will be referencing this
+document.
 
 pyfastg parses graphs that follow **a subset of this specification**: in
 particular, it is designed to work with files output by the
@@ -21,8 +24,7 @@ Pull requests are welcome!
 
 ## Note about the graph topology
 
-Version 1.00 of the [FASTG spec](http://fastg.sourceforge.net/FASTG_Spec_v1.00.pdf) contains
-the following sentence (in section 6, page 7):
+The FASTG spec contains the following sentence (in section 6, page 7):
 
 > Note also that strictly speaking, [the structure described in a FASTG file] is not a graph at all, as we have not specified a notion of vertex. However in many cases one can without ambiguity define vertices and thereby associate a _bona fide_ digraph, and we do so frequently in this document to illustrate concepts.
 
@@ -66,8 +68,12 @@ NodeView(('1+', '29-', '1-', '6-', '2+', '26+', '27+', '2-', '3+', '4+', '6+', '
 {'26+', '29+', '18+', '3-', '2+', '8+', '15-', '24+', '9+', '17+', '27+', '28-', '11+', '6-', '20+', '14+', '19-', '13-', '4-', '21+', '5+', '31+', '22-', '12+', '25-', '30-', '10+', '1-', '7-', '32+', '23-', '33+', '16-'}
 ```
 
-### Required File Format (tl;dr: SPAdes-dialect FASTG files only)
-Currently, pyfastg is hardcoded to parse FASTG files created by the SPAdes assembler. Other valid FASTG files that don't follow the pattern used by SPAdes for edge names are not supported.
+### Details about the required file format (tl;dr: SPAdes-dialect FASTG files only)
+Currently, pyfastg is hardcoded to parse FASTG files created by the SPAdes assembler.
+Other valid FASTG files that don't follow the pattern used by SPAdes for edge names
+are not supported.
+
+#### Edge names
 
 In particular, each edge in the file must have a name formatted like:
 
@@ -87,12 +93,31 @@ raise an error upon trying to convert this number to a `float`.)
 An edge name can optionally end with a `'` character, indicating that
 this edge's reverse complement is being referenced.
 
+#### Edge declaration lines
+
+Here, we refer to each line starting with `>` as an _edge declaration_. An
+edge's sequence is described in the line(s) following its edge declaration
+(until the next edge declaration); additionally, the outgoing adjacencies from
+this edge to other edges can be described on this line (i.e. the line
+`>a:b,c,d;` indicates that the edge `a` has outgoing adjacencies to edges `b`,
+`c`, and `d`).
+
+We are more strict than the FASTG spec in how we parse these lines.
+Each edge declaration must end with a `;` character (after stripping
+whitespace). Section 15 of the FASTG spec mentions that having a newline
+after the semicolon isn't required, but we require it here for the sake of
+simplicity.
+
+#### Edge sequences
+
 We assume that each sequence (the line(s) between edge declarations)
-consists only of the characters `A`, `C`, `G`, `T`, or `U`. Lowercase characters
-or degenerate nucleotides are not allowed; this matches section 15 of version
-1.00 of the [FASTG spec](http://fastg.sourceforge.net/FASTG_Spec_v1.00.pdf).
-(The FASTG spec doesn't explicitly allow for uracil [`U`], but we do anyway to
-allow for RNA sequences.)
+consists only of the characters `A`, `C`, `G`, `T`, or `U`. So, more complex
+types of strings (e.g. "stuffed gaps") are not allowed in an edge's sequence.
+
+Additionally, lowercase characters or degenerate nucleotides are not allowed;
+this matches section 15 of the FASTG spec.
+(The FASTG spec doesn't explicitly allow for uracil [`U`], but we allow it
+anyway in order to support RNA sequences.)
 
 Leading and trailing whitespace in sequence lines will be ignored, so something
 like
@@ -101,10 +126,13 @@ like
 
  G     
 ```
-is technically valid (however, a line like `ATC G` is not valid since the inner
-space, ` `, would be considered part of the sequence).
+is technically valid, and describes the sequence `ATCG`.
+However, a line like `ATC G` is not valid since the inner
+space, ` `, would be considered part of the sequence.
 
-It is also worth noting that pyfastg **only creates nodes based on the edges
+#### About reverse complements
+
+pyfastg **only creates nodes based on the edges
 explicitly described in the graph**: if your graph only contains edges
 `EDGE_1_...`, `EDGE_2_...`, and `EDGE_3_...`, then
 pyfastg will only create nodes 1+, 2+, and 3+, and not the reverse complement

@@ -262,9 +262,19 @@ def parse_fastg(f):
                 if len(curr_node_attrs) > 0:
                     add_node_to_digraph(digraph, curr_node_attrs)
                     curr_node_attrs = {}
-                line_no_sc = stripped_line.strip(";")
-                colons = sum([1 for x in line_no_sc if x == ":"])
-                if colons > 1:
+
+                if not stripped_line.endswith(";"):
+                    raise ValueError(
+                        (
+                            'The edge declaration line "{}" must end with a ; '
+                            "character. (The sequence for this edge should be "
+                            "given on the next line.)"
+                        ).format(stripped_line)
+                    )
+
+                line_no_sc = stripped_line[:-1]
+                colon_ct = line_no_sc.count(":")
+                if colon_ct > 1:
                     raise ValueError(
                         (
                             'Multiple ":" characters found in line "{}". An '
@@ -273,7 +283,7 @@ def parse_fastg(f):
                             '"properties" yet.'
                         ).format(stripped_line)
                     )
-                elif colons == 0:
+                elif colon_ct == 0:
                     # orphaned node or terminal node
                     curr_node_attrs = extract_node_attrs(line_no_sc)
                 else:
