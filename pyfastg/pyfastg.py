@@ -32,16 +32,24 @@ def extract_node_attrs(declaration):
     ------
     ValueError
         If the regular expression we use to retrieve information from a
-        declaration does not match.
+        declaration does not match our regex, or is explicitly not supported
+        by pyfastg in some way.
 
         If trying to parse the length or coverage values from the declaration
         fails.
     """
+    # Quick early checks
     if declaration.startswith("~"):
         raise ValueError(
-            "pyfastg does not support the ~ operation described in the FASTG "
+            "pyfastg does not support the ~ notation described in the FASTG "
             "spec."
         )
+    if "[" in declaration:
+        raise ValueError(
+            "pyfastg does not support the [] notation described in the FASTG "
+            "spec."
+        )
+
     rc = False
     if declaration.endswith("'"):
         rc = True
