@@ -70,8 +70,8 @@ def check_all_attrs_present(
 ):
     """Given a dict of attributes, ensures that all attrs are keys in the dict.
 
-    This is used to make sure all nodes in the graph have the information
-    we expect nodes to have.
+    This is used to make sure all nodes (representing FASTG edges) in the graph
+    have the information we expect them to have.
 
     Parameters
     ----------
@@ -97,7 +97,7 @@ def check_all_attrs_present(
     for required_attr in attrs:
         if required_attr not in attr_mapping:
             raise ValueError(
-                "{} not present for all nodes".format(required_attr)
+                "{} not present for all edges".format(required_attr)
             )
 
 
@@ -139,7 +139,7 @@ def add_node_to_digraph(digraph, node_attrs):
     check_all_attrs_present(node_attrs)
     if len(node_attrs["seq"]) != node_attrs["length"]:
         raise ValueError(
-            "Length given vs. actual seq. length differs for node {}".format(
+            "Length given vs. actual seq. length differs for edge {}".format(
                 node_attrs["name"]
             )
         )

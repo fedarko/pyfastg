@@ -97,3 +97,14 @@ def test_parse_no_rc_assembly_graph():
     assert set(digraph.nodes) == {"1+", "1-", "2+", "3+", "3-"}
     assert ("1+", "3-") in digraph.edges
     assert ("1-", "2+") in digraph.edges
+
+
+def test_parse_no_seq_assembly_graph():
+    """Tests a graph where an edge isn't defined.
+
+    This is kind of like an integration test that verifies that the
+    call to check_all_attrs_present() after creating the graph is good.
+    """
+    with pytest.raises(ValueError) as exc_info:
+        parse_fastg("pyfastg/tests/input/noseq.fastg")
+    assert str(exc_info.value) == "length not present for all edges" 
