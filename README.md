@@ -4,13 +4,16 @@
 [![PyPI](https://img.shields.io/pypi/v/pyfastg)](https://pypi.org/project/pyfastg)
 
 ## The FASTG file format
-FASTG is a format to describe genome assemblies, geared toward accurately representing the ambiguity resulting from sequencing limitations, ploidy, or other factors that complicate representation of a seqence as a simple string.  The official spec for the FASTG format (version 1.00, as of writing)
+FASTG is a format for describing sequencing assembly graphs. It is geared toward
+accurately representing the ambiguity resulting from sequencing limitations, ploidy,
+or other factors that complicate representation of a seqence as a simple string.
+
+The official specification for the FASTG format (version 1.00, as of writing)
 can be found [here](http://fastg.sourceforge.net/). Whenever the rest of this
 documentation mentions "the FASTG spec," this is in reference to this version
-of the spec.
-
-pyfastg parses graphs that follow **a subset of this specification**: in
-particular, it is designed to work with files output by the
+of the specification. pyfastg parses graphs that follow
+**a subset of this specification**: in
+particular, pyfastg is designed to work with files output by the
 [SPAdes](http://cab.spbu.ru/software/spades/) family of assemblers.
 
 ## The pyfastg library
