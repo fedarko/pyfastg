@@ -6,34 +6,34 @@ from skbio import DNA
 def extract_node_attrs(node_declaration):
     """Returns three specific attributes of a FASTG node declaration.
 
-        As an example, extract_node_attrs("EDGE_3_length_100_cov_28.087'")
-        should return {"name": "3-", "length": 100, "cov": 28.087}.
+    As an example, extract_node_attrs("EDGE_3_length_100_cov_28.087'")
+    should return {"name": "3-", "length": 100, "cov": 28.087}.
 
-        Parameters
-        ----------
+    Parameters
+    ----------
 
-        node_declaration: str
-            A string tentatively representing a FASTG node declaration (even
-            though it should start with ">EDGE"). We impose some pretty strict
-            criteria on how this declaration can be structured in order to make
-            sure that we get the same amount of information from all nodes in
-            the assembly graph file.
+    node_declaration: str
+        A string tentatively representing a FASTG node declaration (even
+        though it should start with ">EDGE"). We impose some pretty strict
+        criteria on how this declaration can be structured in order to make
+        sure that we get the same amount of information from all nodes in
+        the assembly graph file.
 
-        Returns
-        -------
+    Returns
+    -------
 
-        dict
-            A mapping of "name", "length", and "cov" to the corresponding
-            corresponding node attributes. The "name" value should be a str,
-            the "length" value should be an int, the "cov" value should be a
-            float, and the "rc" value should be a bool.
+    dict
+        A mapping of "name", "length", and "cov" to the corresponding
+        corresponding node attributes. The "name" value should be a str,
+        the "length" value should be an int, the "cov" value should be a
+        float, and the "rc" value should be a bool.
 
-        Raises
-        ------
+    Raises
+    ------
 
-        If the regular expression we use to retrieve information from a node
-        declaration does not match the node_declaration, this will raise a
-        ValueError.
+    If the regular expression we use to retrieve information from a node
+    declaration does not match the node_declaration, this will raise a
+    ValueError.
     """
     rc = False
     if node_declaration.endswith("'"):
@@ -66,29 +66,29 @@ def check_all_attrs_present(
 ):
     """Given a dict of attributes, ensures that all attrs are keys in the dict.
 
-        This is used to make sure all nodes in the graph have the information
-        we expect nodes to have.
+    This is used to make sure all nodes in the graph have the information
+    we expect nodes to have.
 
-        Parameters
-        ----------
+    Parameters
+    ----------
 
-        attr_mapping: dict
-            A dictionary describing the attributes of a node.
+    attr_mapping: dict
+        A dictionary describing the attributes of a node.
 
-        attrs: collection
-            All of the required attributes that we expect to be present as keys
-            in attr_mapping. The defaults for this are pretty reasonable.
+    attrs: collection
+        All of the required attributes that we expect to be present as keys
+        in attr_mapping. The defaults for this are pretty reasonable.
 
-        Returns
-        -------
+    Returns
+    -------
 
-        None
+    None
 
-        Raises
-        ------
+    Raises
+    ------
 
-        If any of the entries in "attrs" are not present in attr_mapping, this
-        will raise a ValueError.
+    If any of the entries in "attrs" are not present in attr_mapping, this
+    will raise a ValueError.
     """
     for required_attr in attrs:
         if required_attr not in attr_mapping:
@@ -100,37 +100,37 @@ def check_all_attrs_present(
 def add_node_to_digraph(digraph, node_attrs):
     """Adds a node (and potentially some edges) to an existing DiGraph object.
 
-        Parameters
-        ----------
+    Parameters
+    ----------
 
-        digraph: networkx.DiGraph
-            An existing graph object, to which a new node and potentially some
-            edges will be added.
+    digraph: networkx.DiGraph
+        An existing graph object, to which a new node and potentially some
+        edges will be added.
 
-        node_attrs: dict
-            A key/value representation of the attributes the new node will
-            have.  This includes everything check_all_attrs_present() looks for
-            by default, as well as optionally an "outgoing_node_names"
-            attribute: if this outgoing_node_names attribute is present as a
-            key in node_attrs, then this will add edges from the new node to
-            all of the node IDs contained in node_attrs["outgoing_node_names"].
+    node_attrs: dict
+        A key/value representation of the attributes the new node will
+        have.  This includes everything check_all_attrs_present() looks for
+        by default, as well as optionally an "outgoing_node_names"
+        attribute: if this outgoing_node_names attribute is present as a
+        key in node_attrs, then this will add edges from the new node to
+        all of the node IDs contained in node_attrs["outgoing_node_names"].
 
-            (Even if the neighbor nodes referred to in these edges have not
-            already been added to the graph, adding an edge referring to them
-            should add the corresponding nodes to the graph -- and later on,
-            when those nodes are explicitly added to the graph, the edges
-            incident on them should remain.)
+        (Even if the neighbor nodes referred to in these edges have not
+        already been added to the graph, adding an edge referring to them
+        should add the corresponding nodes to the graph -- and later on,
+        when those nodes are explicitly added to the graph, the edges
+        incident on them should remain.)
 
-        Returns
-        -------
+    Returns
+    -------
 
-        None
+    None
 
-        Raises
-        ------
+    Raises
+    ------
 
-        ValueError: if the length of the node's seq attribute differs from its
-        actual length attribute.
+    ValueError: if the length of the node's seq attribute differs from its
+    actual length attribute.
     """
     check_all_attrs_present(node_attrs)
     if len(node_attrs["seq"]) != node_attrs["length"]:
@@ -154,18 +154,18 @@ def add_node_to_digraph(digraph, node_attrs):
 def parse_fastg(f):
     """Given a path to a FASTG file, returns a representation of its structure.
 
-        Parameters
-        ----------
+    Parameters
+    ----------
 
-        f: str
-            Path to a (SPAdes-style) FASTG file.
+    f: str
+        Path to a (SPAdes-style) FASTG file.
 
-        Returns
-        -------
+    Returns
+    -------
 
-        networkx.DiGraph
-            A representation of the structure of the input assembly graph.
-            This DiGraph can immediately be used with the NetworkX library.
+    networkx.DiGraph
+        A representation of the structure of the input assembly graph.
+        This DiGraph can immediately be used with the NetworkX library.
     """
 
     digraph = nx.DiGraph()
