@@ -11,30 +11,31 @@ or other factors that complicate representation of a seqence as a simple string.
 The official specification for the FASTG format (version 1.00, as of writing)
 can be found [here](http://fastg.sourceforge.net/). Whenever the rest of this
 documentation mentions "the FASTG spec," this is in reference to this version
-of the specification. pyfastg parses graphs that follow
-**a subset of this specification**: in
+of the specification.
+
+pyfastg parses graphs that follow **a subset of this specification**: in
 particular, pyfastg is designed to work with files output by the
 [SPAdes](http://cab.spbu.ru/software/spades/) family of assemblers.
 
 ## The pyfastg library
 pyfastg contains `parse_fastg()`, a function that accepts as input a path
-to a SPAdes FASTG file. This function parses the structure of the specified
-file, returning a [NetworkX](https://networkx.github.io) `DiGraph` object representing
-the structure of the graph.
+to a SPAdes FASTG file. This function reads the specified
+file and returns a [NetworkX](https://networkx.github.io) `DiGraph` object
+representing the structure of the assembly graph.
 
 pyfastg is very much in its infancy, so it may be most useful as a starting point.
 Pull requests are welcome!
 
-## Note about the graph topology
+### Note about the graph topology
 
 The FASTG spec contains the following sentence (in section 6, page 7):
 
 > Note also that strictly speaking, [the structure described in a FASTG file] is not a graph at all, as we have not specified a notion of vertex. However in many cases one can without ambiguity define vertices and thereby associate a _bona fide_ digraph, and we do so frequently in this document to illustrate concepts.
 
-We do this in pyfastg. **"Edges" in the FASTG file will be represented as nodes
+We take this approach in pyfastg. **"Edges" in the FASTG file will be represented as nodes
 in the NetworkX graph, and "adjacencies" between edges in the FASTG file will
 be represented as edges in the NetworkX graph.** As far as we're aware, this is
-usually how these graphs are visualized.
+usually how these files are visualized.
 
 ### Installation
 pyfastg can be installed using pip:
@@ -51,13 +52,16 @@ assumes that you're located in the root directory of the pyfastg repo.
 >>> import pyfastg
 >>> g = pyfastg.parse_fastg("pyfastg/tests/input/assembly_graph.fastg")
 >>> # g is now a NetworkX DiGraph! We can do whatever we want with this object.
+>>>
 >>> # Example: List the sequences in this graph (these are "edges" in the FASTG
 >>> # file, but are represented as nodes in g)
 >>> g.nodes()
 NodeView(('1+', '29-', '1-', '6-', '2+', '26+', '27+', '2-', '3+', '4+', '6+', '7+', '3-', '33-', '9-', '4-', '5+', '5-', '28+', '7-', '8+', '28-', '9+', '8-', '12-', '10+', '12+', '10-', '24-', '32-', '11+', '30-', '11-', '27-', '19-', '13+', '25+', '31-', '13-', '14+', '14-', '26-', '15+', '15-', '23-', '16+', '16-', '17+', '17-', '19+', '18+', '33+', '18-', '20+', '20-', '22+', '21+', '21-', '22-', '23+', '24+', '25-', '29+', '30+', '31+', '32+'))
+>>>
 >>> # Example: Get details for a single sequence (length, coverage, GC-content)
 >>> g.nodes["15+"]
 {'length': 193, 'cov': 6.93966, 'gc': 0.5492227979274611}
+>>>
 >>> # Example: Get information about the graph's connectivity
 >>> import networkx as nx
 >>> components = list(nx.weakly_connected_components(g))
@@ -71,7 +75,7 @@ NodeView(('1+', '29-', '1-', '6-', '2+', '26+', '27+', '2-', '3+', '4+', '6+', '
 {'26+', '29+', '18+', '3-', '2+', '8+', '15-', '24+', '9+', '17+', '27+', '28-', '11+', '6-', '20+', '14+', '19-', '13-', '4-', '21+', '5+', '31+', '22-', '12+', '25-', '30-', '10+', '1-', '7-', '32+', '23-', '33+', '16-'}
 ```
 
-### Details about the required file format (tl;dr: SPAdes-dialect FASTG files only)
+### Details about the required input file format (tl;dr: SPAdes-dialect FASTG files only)
 Currently, pyfastg is hardcoded to parse FASTG files created by the SPAdes assembler.
 Other valid FASTG files that don't follow the pattern used by SPAdes for edge names
 are not supported.
@@ -102,7 +106,7 @@ Here, we refer to each line starting with `>` as an _edge declaration_. An
 edge's sequence is described in the line(s) following its edge declaration
 (until the next edge declaration); additionally, the outgoing adjacencies from
 this edge to other edges may be described on this line, if present (i.e. the
-line `>a:b,c,d;` indicates that the edge `a` has outgoing adjacencies to edges
+line `>EDGE_1_...:EDGE_2...,EDGE_3...,EDGE_4;` indicates that the edge `a` has outgoing adjacencies to edges
 `b`, `c`, and `d`).
 
 Each edge declaration must end with a `;` character (after removing
@@ -114,12 +118,15 @@ simplicity.
 
 We assume that each sequence (the line(s) between edge declarations)
 consists only of the characters `A`, `C`, `G`, `T`, or `U`. So, more complex
-types of strings (e.g. "stuffed gaps") are not allowed in an edge's sequence.
+types of strings (e.g. the "stuffed gaps" described in the FASTG spec) are
+not allowed in an edge's sequence.
 
 Additionally, lowercase characters or degenerate nucleotides are not allowed;
 this matches section 15 of the FASTG spec.
-(The FASTG spec doesn't explicitly allow for uracil [`U`], but we allow it
-anyway in order to support RNA sequences.)
+The FASTG spec doesn't explicitly allow for uracil (`U`), but we allow it
+anyway in order to support RNA sequences. (`U` and `T` are allowed to be contained
+in the same sequence,
+[in the unlikely case that this is needed](https://en.wikipedia.org/wiki/Uracil#In_DNA).)
 
 Leading and trailing whitespace in sequence lines will be ignored, so something
 like
@@ -132,20 +139,9 @@ is technically valid, and describes the sequence `ATCG`.
 However, a line like `ATC G` is not valid since the inner
 space, ` `, would be considered part of the sequence.
 
-#### About reverse complements
-
-pyfastg **only creates nodes based on the edges
-explicitly described in the graph**: if your graph only contains edges
-`EDGE_1_...`, `EDGE_2_...`, and `EDGE_3_...`, then
-pyfastg will only create nodes 1+, 2+, and 3+, and not the reverse complement
-nodes 1-, 2-, 3-, etc.
-
-Similarly, if your graph contains an adjacency from edge `EDGE_1_...` to
-`EDGE_2_...'`, then this adjacency will only be represented as a single edge
-(1+ → 2-) in pyfastg's output graph. The implied reverse-complement of this
-edge (2+ → 1-) will not be automatically created.
-
 ### Details about the output NetworkX graph
+
+#### Node names and attributes
 Nodes in the returned `DiGraph` (corresponding to edges in the FASTG file)
 will contain three attribute fields:
 
@@ -156,9 +152,25 @@ will contain three attribute fields:
 Furthermore, every node's name will end in `-` if the node is a "reverse
 complement" (i.e. if its declaration in the FASTG file ends in a `'` character) and `+` otherwise.
 
-### Dependencies
+#### About reverse complements
 
+pyfastg **only creates nodes based on the edges
+explicitly described in the FASTG file**. If a file only describes edges
+`EDGE_1_...`, `EDGE_2_...`, and `EDGE_3_...`, then
+pyfastg will only create nodes 1+, 2+, and 3+, and not the reverse complement
+nodes 1-, 2-, 3-, etc.
+
+Similarly, if a file contains an adjacency from edge `EDGE_1_...` to
+`EDGE_2_...'`, then this adjacency will only be represented as a single edge
+(1+ → 2-) in pyfastg's output graph. The implied reverse-complement of this
+edge (2+ → 1-) will not be automatically created unless the file explicitly
+contains an adjacency from `EDGE_2_...` to `EDGE_1_...'`.
+
+## Dependencies
+
+- Python ≥ 3.6
+  - (pyfastg might be able to work with earlier versions of Python, but these are not explicitly supported.)
 - [NetworkX](https://networkx.github.io)
 
-### License
+## License
 pyfastg is licensed under the MIT License. Please see the `LICENSE` file for details.
