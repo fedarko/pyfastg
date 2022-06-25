@@ -278,3 +278,27 @@ GATCC
         'in the declaration " EDGE_2_length_3_cov_1". Please remember '
         "that pyfastg only supports SPAdes-dialect FASTG files."
     )
+
+
+def test_parse_tilde_before_outgoing_adj_name():
+    """These are technically supported in the spec, but we don't allow them."""
+    fh = write_tempfile(
+        """>EDGE_1_length_9_cov_4.5:EDGE_3_length_5_cov_16.5',~EDGE_2_length_3_cov_1;
+ATCGCCCAT
+>EDGE_1_length_9_cov_4.5':EDGE_2_length_3_cov_1';
+ATGGGCGAT
+>EDGE_2_length_3_cov_1:EDGE_1_length_9_cov_4.5;
+CGA
+>EDGE_2_length_3_cov_1';
+TCG
+>EDGE_3_length_5_cov_16.5:EDGE_1_length_9_cov_4.5',EDGE_2_length_3_cov_1';
+GGATC
+>EDGE_3_length_5_cov_16.5':EDGE_2_length_3_cov_1';
+GATCC
+"""
+    )
+    with pytest.raises(ValueError) as ei:
+        parse_fastg(fh.name)
+    assert str(ei.value) == (
+        "pyfastg does not support the ~ operation described in the FASTG spec."
+    )

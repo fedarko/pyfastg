@@ -37,6 +37,11 @@ def extract_node_attrs(declaration):
         If trying to parse the length or coverage values from the declaration
         fails.
     """
+    if declaration.startswith("~"):
+        raise ValueError(
+            "pyfastg does not support the ~ operation described in the FASTG "
+            "spec."
+        )
     rc = False
     if declaration.endswith("'"):
         rc = True
