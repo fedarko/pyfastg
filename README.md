@@ -1,4 +1,4 @@
-# pyfastg: a minimal Python library for parsing networks from SPAdes FASTG files
+# pyfastg: a minimal Python library for parsing SPAdes FASTG files
 [![pyfastg CI](https://github.com/fedarko/pyfastg/actions/workflows/main.yml/badge.svg)](https://github.com/fedarko/pyfastg/actions/workflows/main.yml)
 [![Code Coverage](https://codecov.io/gh/fedarko/pyfastg/branch/master/graph/badge.svg)](https://codecov.io/gh/fedarko/pyfastg)
 [![PyPI](https://img.shields.io/pypi/v/pyfastg)](https://pypi.org/project/pyfastg)
