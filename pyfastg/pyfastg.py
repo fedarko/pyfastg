@@ -1,6 +1,5 @@
 import re
 import networkx as nx
-from skbio import DNA
 
 
 def extract_node_attrs(node_declaration):
@@ -101,6 +100,60 @@ def check_all_attrs_present(
             )
 
 
+def validate_seq_and_compute_gc(seq):
+    """Validates a sequence and computes its GC content.
+
+    This replaces our previous dependency on scikit-bio.DNA() to do this.
+
+    Parameters
+    ----------
+    seq: str
+        Represents a DNA or RNA sequence.
+
+    Returns
+    -------
+    gc: float
+        GC content. Will be within the range [0, 1].
+        If the length of seq is zero, the returned GC content will be zero.
+
+    Raises
+    ------
+    ValueError
+        If the sequence does not only contain characters from the alphabet
+        {A, C, G, T, U}.
+
+    References
+    ----------
+    Zero-length sequences are ok, per the FASTG spec:
+    http://fastg.sourceforge.net/FASTG_Spec_v1.00.pdf
+
+    Returning a GC content of zero for zero-length sequences is consistent
+    with the behavior of scikit-bio and of BioPython:
+    http://scikit-bio.org/docs/latest/generated/skbio.sequence.DNA.gc_content.html
+    https://biopython.org/docs/dev/api/Bio.SeqUtils.html#Bio.SeqUtils.GC
+    """
+    nongc_chars = "ATU"
+    gc_chars = "GC"
+    gc_ct = 0
+    seq_len = 0
+    for char in seq:
+        if char in gc_chars:
+            gc_ct += 1
+        elif char not in nongc_chars:
+            raise ValueError(
+                (
+                    'Sequence "{}" contains character(s) not in the alphabet '
+                    "{{A, C, G, T, U}}."
+                ).format(seq)
+            )
+        seq_len += 1
+
+    if seq_len == 0:
+        return 0
+    else:
+        return gc_ct / seq_len
+
+
 def add_node_to_digraph(digraph, node_attrs):
     """Adds a node (and potentially some edges) to an existing DiGraph object.
 
@@ -143,7 +196,7 @@ def add_node_to_digraph(digraph, node_attrs):
                 node_attrs["name"]
             )
         )
-    node_gc_content = DNA(node_attrs["seq"]).gc_content()
+    node_gc_content = validate_seq_and_compute_gc(node_attrs["seq"])
     digraph.add_node(
         node_attrs["name"],
         length=node_attrs["length"],

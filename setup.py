@@ -32,6 +32,6 @@ setup(
     url="https://github.com/fedarko/pyfastg",
     classifiers=classifiers,
     packages=find_packages(),
-    install_requires=["networkx", "scikit-bio"],
+    install_requires=["networkx"],
     extras_require={"dev": ["pytest", "pytest-cov", "flake8", "black"]},
 )

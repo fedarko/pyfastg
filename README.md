@@ -85,8 +85,12 @@ An edge name can optionally end with a `'` character, indicating that
 this edge's reverse complement is being referenced.
 
 We assume that each sequence (the line(s) between edge declarations)
-consists only of valid DNA characters, as determined by
-[`skbio.DNA`](http://scikit-bio.org/docs/latest/generated/skbio.sequence.DNA.html).
+consists only of the characters `A`, `C`, `G`, `T`, or `U`. Lowercase characters
+or degenerate nucleotides are not allowed; this matches section 15 of version
+1.00 of the [FASTG spec](http://fastg.sourceforge.net/FASTG_Spec_v1.00.pdf).
+(The FASTG spec doesn't explicitly allow for uracil [`U`], but we do anyway to
+allow for RNA sequences.)
+
 Leading and trailing whitespace in sequence lines will be ignored, so something
 like
 ```bash
@@ -94,8 +98,8 @@ like
 
  G     
 ```
-is perfectly valid (however, `ATC G` is not since the inner space, ` `, will be
-considered part of the sequence).
+is technically valid (however, a line like `ATC G` is not valid since the inner
+space, ` `, would be considered part of the sequence).
 
 It is also worth noting that pyfastg **only creates nodes based on the edges
 explicitly described in the graph**: if your graph only contains edges
@@ -122,7 +126,6 @@ complement" (i.e. if its declaration in the FASTG file ends in a `'` character) 
 ### Dependencies
 
 - [NetworkX](https://networkx.github.io)
-- [scikit-bio](http://scikit-bio.org/)
 
 ### License
 pyfastg is licensed under the MIT License. Please see the `LICENSE` file for details.
