@@ -112,6 +112,29 @@ def check_all_attrs_present(
             )
 
 
+def check_unique(values, err_msg):
+    """Checks that a given list contains all unique values.
+
+    Parameters
+    ----------
+    values: list
+
+    err_msg: str
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    ValueError
+        If "values" is not unique. (This particular error's message will be
+        err_msg.)
+    """
+    if len(set(values)) < len(values):
+        raise ValueError(err_msg)
+
+
 def validate_seq_and_compute_gc(seq):
     """Validates a sequence and computes its GC content.
 
@@ -206,15 +229,21 @@ def add_node_to_digraph(digraph, node_attrs):
             )
         )
     node_gc_content = validate_seq_and_compute_gc(node_attrs["seq"])
+    node_name = node_attrs["name"]
     digraph.add_node(
-        node_attrs["name"],
+        node_name,
         length=node_attrs["length"],
         cov=node_attrs["cov"],
         gc=node_gc_content,
     )
     if "outgoing_node_names" in node_attrs:
+        outgoing_nodes = node_attrs["outgoing_node_names"]
+        check_unique(
+            outgoing_nodes,
+            "Node {} has duplicate outgoing adjacencies.".format(node_name),
+        )
         for neighbor_node_name in node_attrs["outgoing_node_names"]:
-            digraph.add_edge(node_attrs["name"], neighbor_node_name)
+            digraph.add_edge(node_name, neighbor_node_name)
 
 
 def update_and_check_decl(node_name, declaration, nodename2declaration):

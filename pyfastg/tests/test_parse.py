@@ -186,3 +186,12 @@ def test_parse_inconsistent_declarations():
         'saw "EDGE_1_length_20_cov_5.2", but we just saw '
         '"EDGE_1_length_9_cov_20".'
     )
+
+
+def test_parse_multi_graph():
+    """Tests a graph with multiple copies of a single adjacency."""
+    with pytest.raises(ValueError) as exc_info:
+        parse_fastg("pyfastg/tests/input/multi_graph.fastg")
+    assert str(exc_info.value) == (
+        "Node 1+ has duplicate outgoing adjacencies."
+    )
