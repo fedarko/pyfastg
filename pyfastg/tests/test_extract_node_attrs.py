@@ -9,6 +9,10 @@ def test_basic():
     attrs = extract_node_attrs("EDGE_123_length_160_cov_90")
     assert attrs == {"name": "123+", "length": 160, "cov": 90}
 
+    # Check that the > is ok, and that ".5" is interpretable by python
+    attrs = extract_node_attrs(">EDGE_123hi_length_160_cov_.5'")
+    assert attrs == {"name": "123hi-", "length": 160, "cov": 0.5}
+
 
 def test_alphabetical_ids():
     attrs = extract_node_attrs("EDGE_asdf_length_100_cov_29.087'")
@@ -69,3 +73,23 @@ def test_bad_coverage_passes_regex_but_bad_float():
         with pytest.raises(ValueError) as exc_info:
             extract_node_attrs(bd)
         assert "could not convert string to float" in str(exc_info.value)
+
+
+def test_leading_or_trailing_info_not_allowed():
+    bad_decls = (
+        "asdfEDGE_asdf_length_100_cov_29.087'",
+        "EDGE_asdf_length_100_cov_29.087'ghij",
+        "asdfEDGE_asdf_length_100_cov_29.087'ghij",
+        "eEDGE_asdf_length_100_cov_29.087",
+        "EDGE_asdf_length_100_cov_29.087_",
+        "EDGE_asdf_length_100_cov_29.087_asdf",
+        "eEDGE_asdf_length_100_cov_29.087'",
+    )
+    for bd in bad_decls:
+        with pytest.raises(ValueError) as exc_info:
+            extract_node_attrs(bd)
+        assert str(exc_info.value) == (
+            "Wasn't able to find all expected info (edge name, length, "
+            'coverage) in the declaration "{}". Please remember that pyfastg '
+            "only supports SPAdes-dialect FASTG files."
+        ).format(bd)
