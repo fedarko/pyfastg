@@ -67,9 +67,16 @@ def extract_node_attrs(declaration):
     else:
         name += "+"
 
-    # These will trigger errors if the length or coverage are invalid
-    # (e.g. the coverage is just ..... or something silly)
+    # These will trigger errors if the length or coverage are invalid. In
+    # practice, the length should be fine (since we know that it will be a
+    # string comprised of just digits).
     slen = int(m.group("length"))
+    # However, since the coverage regex allows for the . character (since
+    # coverage is usually a float), we could have problematic cases slip
+    # through the regex -- for example, "cov_....." or something silly.
+    # We could modify the coverage regex to be fancier and only detect numbers
+    # with a single ".", but it's easier (and simpler) to just let Python's
+    # float() function do the dirty work for us.
     scov = float(m.group("cov"))
     return {"name": name, "length": slen, "cov": scov}
 
