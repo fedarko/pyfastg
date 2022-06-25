@@ -282,8 +282,8 @@ def update_and_check_decl(node_name, declaration, nodename2declaration):
         if existing_declaration != declaration:
             raise ValueError(
                 (
-                    "Node {} has inconsistent declarations: we already saw "
-                    '"{}", but we just saw "{}".'
+                    "Node {} has inconsistent edge declarations in the FASTG: "
+                    'we already saw "{}", but we just saw "{}".'
                 ).format(node_name, existing_declaration, declaration)
             )
     else:

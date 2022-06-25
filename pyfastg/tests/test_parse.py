@@ -156,24 +156,24 @@ def test_parse_inconsistent_declarations():
     with pytest.raises(ValueError) as exc_info:
         parse_fastg("pyfastg/tests/input/inconsistent_cov.fastg")
     assert str(exc_info.value) == (
-        "Node 3- has inconsistent declarations: we already saw "
-        '"EDGE_3_length_5_cov_16.6\'", but we just saw '
+        "Node 3- has inconsistent edge declarations in the FASTG: we already "
+        'saw "EDGE_3_length_5_cov_16.6\'", but we just saw '
         '"EDGE_3_length_5_cov_16.5\'".'
     )
 
     with pytest.raises(ValueError) as exc_info:
         parse_fastg("pyfastg/tests/input/inconsistent_len.fastg")
     assert str(exc_info.value) == (
-        "Node 1+ has inconsistent declarations: we already saw "
-        '"EDGE_1_length_20_cov_4.5", but we just saw '
+        "Node 1+ has inconsistent edge declarations in the FASTG: we already "
+        'saw "EDGE_1_length_20_cov_4.5", but we just saw '
         '"EDGE_1_length_9_cov_4.5".'
     )
 
     with pytest.raises(ValueError) as exc_info:
         parse_fastg("pyfastg/tests/input/inconsistent_both.fastg")
     assert str(exc_info.value) == (
-        "Node 1+ has inconsistent declarations: we already saw "
-        '"EDGE_1_length_20_cov_5.2", but we just saw '
+        "Node 1+ has inconsistent edge declarations in the FASTG: we already "
+        'saw "EDGE_1_length_20_cov_5.2", but we just saw '
         '"EDGE_1_length_9_cov_4.5".'
     )
 
@@ -182,7 +182,7 @@ def test_parse_inconsistent_declarations():
     with pytest.raises(ValueError) as exc_info:
         parse_fastg("pyfastg/tests/input/inconsistent_on_same_line.fastg")
     assert str(exc_info.value) == (
-        "Node 1+ has inconsistent declarations: we already saw "
-        '"EDGE_1_length_20_cov_5.2", but we just saw '
+        "Node 1+ has inconsistent edge declarations in the FASTG: we already "
+        'saw "EDGE_1_length_20_cov_5.2", but we just saw '
         '"EDGE_1_length_9_cov_20".'
     )
