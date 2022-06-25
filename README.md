@@ -17,7 +17,19 @@ file, returning a [NetworkX](https://networkx.github.io) `DiGraph` object repres
 the structure of the graph.
 
 pyfastg is very much in its infancy, so it may be most useful as a starting point.
-Pull requests welcome!
+Pull requests are welcome!
+
+## Note about the graph topology
+
+Version 1.00 of the [FASTG spec](http://fastg.sourceforge.net/FASTG_Spec_v1.00.pdf) contains
+the following sentence (in section 6, page 7):
+
+> Note also that strictly speaking, [the structure described in a FASTG file] is not a graph at all, as we have not specified a notion of vertex. However in many cases one can without ambiguity define vertices and thereby associate a _bona fide_ digraph, and we do so frequently in this document to illustrate concepts.
+
+We do this in pyfastg. **"Edges" in the FASTG file will be represented as nodes
+in the NetworkX graph, and "adjacencies" between edges in the FASTG file will
+be represented as edges in the NetworkX graph.** As far as we're aware, this is
+usually how these graphs are visualized.
 
 ### Installation
 pyfastg can be installed using pip:
