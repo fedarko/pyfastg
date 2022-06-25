@@ -98,12 +98,11 @@ this edge's reverse complement is being referenced.
 Here, we refer to each line starting with `>` as an _edge declaration_. An
 edge's sequence is described in the line(s) following its edge declaration
 (until the next edge declaration); additionally, the outgoing adjacencies from
-this edge to other edges can be described on this line (i.e. the line
-`>a:b,c,d;` indicates that the edge `a` has outgoing adjacencies to edges `b`,
-`c`, and `d`).
+this edge to other edges may be described on this line, if present (i.e. the
+line `>a:b,c,d;` indicates that the edge `a` has outgoing adjacencies to edges
+`b`, `c`, and `d`).
 
-We are more strict than the FASTG spec in how we parse these lines.
-Each edge declaration must end with a `;` character (after stripping
+Each edge declaration must end with a `;` character (after removing
 whitespace). Section 15 of the FASTG spec mentions that having a newline
 after the semicolon isn't required, but we require it here for the sake of
 simplicity.
@@ -143,13 +142,13 @@ Similarly, if your graph contains an adjacency from edge `EDGE_1_...` to
 (1+ → 2-) in pyfastg's output graph. The implied reverse-complement of this
 edge (2+ → 1-) will not be automatically created.
 
-### Identified node attributes
-Nodes in the returned `DiGraph` (represented in the FASTG file as `EDGE_`s)
-contain three attribute fields:
+### Details about the output NetworkX graph
+Nodes in the returned `DiGraph` (corresponding to edges in the FASTG file)
+will contain three attribute fields:
 
 1. `length`: the length of the sequence (represented as a python `int`)
 2. `cov`: the coverage of the sequence (represented as a python `float`)
-2. `gc`: the GC-content of the sequence (represented as a python `float`)
+2. `gc`: the GC-content (in the range [0, 1]) of the sequence (represented as a python `float`)
 
 Furthermore, every node's name will end in `-` if the node is a "reverse
 complement" (i.e. if its declaration in the FASTG file ends in a `'` character) and `+` otherwise.
