@@ -15,7 +15,6 @@ def extract_node_attrs(declaration):
 
     Parameters
     ----------
-
     declaration: str
         A string tentatively representing a FASTG edge declaration.
         We impose some pretty strict criteria on how this can be structured in
@@ -24,7 +23,6 @@ def extract_node_attrs(declaration):
 
     Returns
     -------
-
     dict
         A mapping of "name", "length", and "cov" to this edge's attributes.
         The "name" value will be a str, the "length" value will be an int,
@@ -50,7 +48,7 @@ def extract_node_attrs(declaration):
     # saying "capture this group, and also call it 'name'" -- this makes it
     # easy to extract the edge name, length, etc. from the declaration.
     p = re.compile(
-        r"^>?EDGE_(?P<name>[a-zA-Z\d]+)_length_(?P<length>\d+)_cov_(?P<cov>[\d\.]+)$"  # noqa
+        r"^EDGE_(?P<name>[a-zA-Z\d]+)_length_(?P<length>\d+)_cov_(?P<cov>[\d\.]+)$"  # noqa
     )
     m = p.search(nonrc_declaration)
     if m is None:
@@ -91,7 +89,6 @@ def check_all_attrs_present(
 
     Parameters
     ----------
-
     attr_mapping: dict
         A dictionary describing the attributes of a node.
 
@@ -101,14 +98,12 @@ def check_all_attrs_present(
 
     Returns
     -------
-
     None
 
     Raises
     ------
-
-    If any of the entries in "attrs" are not present in attr_mapping, this
-    will raise a ValueError.
+    ValueError
+        If any of the entries in "attrs" are not present in attr_mapping.
     """
     for required_attr in attrs:
         if required_attr not in attr_mapping:
@@ -176,7 +171,6 @@ def add_node_to_digraph(digraph, node_attrs):
 
     Parameters
     ----------
-
     digraph: networkx.DiGraph
         An existing graph object, to which a new node and potentially some
         edges will be added.
@@ -197,12 +191,10 @@ def add_node_to_digraph(digraph, node_attrs):
 
     Returns
     -------
-
     None
 
     Raises
     ------
-
     ValueError: if the length of the node's seq attribute differs from its
     actual length attribute.
     """
@@ -225,18 +217,89 @@ def add_node_to_digraph(digraph, node_attrs):
             digraph.add_edge(node_attrs["name"], neighbor_node_name)
 
 
+def update_and_check_decl(node_name, declaration, nodename2declaration):
+    """Updates and checks a dict regarding declaration consistency.
+
+    Here's what's going on. An edge's full "declaration" (e.g.
+    "EDGE_1_length_9909_cov_6.94721") contains multiple types of information
+    besides the edge's actual identifier: it also describes length and
+    coverage. An edge's declaration can be repeated multiple times in the
+    FASTG file (whenever another edge has an outgoing adjacency to this edge,
+    the declaration gets repeated; this is because, from the FASTG spec's
+    perspective, this bulky declaration is really the full name of the edge).
+
+    However, to us, this declaration isn't the edge's name. The edge's name
+    (well, really the *node*'s name in our output NetworkX graph) will be based
+    on just some of the edge's info -- "EDGE_1_length_9909_cov_6.94721" becomes
+    just "1+", with the other information stored as attributes of this node.
+
+    The problem we want to address here is *inconsistency*. What do you do with
+    a malformed graph, where we later see a reference to an edge with the
+    declaration "EDGE_1_length_9909_cov_7"? According to the FASTG spec, this
+    is a completely different edge, since its name is different; but from our
+    perspective it's still "1+", right?
+
+    This function addresses this problem. The first time we see an edge's
+    declaration (whether it is on the line that this edge is actually declared,
+    or if it's just because another edge had an outgoing adjacency to this
+    edge), we store the exact declaration we see. Every time we see this edge's
+    declaration again, we verify that the declarations are consistent.
+
+    ... This is probably overkill, but better safe than sorry.
+
+    Parameters
+    ----------
+    node_name: str
+        The name of a node in the NetworkX graph. Something like "1+".
+
+    declaration: str
+        The full declaration of this node's corresponding edge in the FASTG
+        file. Something like "EDGE_1_length_9909_cov_6.942721".
+
+    nodename2declaration: dict
+        Maps node names to their seen declarations.
+
+        If node_name is not already a key in this dict, we will add node_name
+        to this dict (with declaration as the value to which node_name maps).
+
+        If node_name is already a key in this dict, we will check that
+        declaration matches the existing declaration stored for node_name in
+        this dict.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    ValueError
+        If node_name is in nodename2declaration, but
+        nodename2declaration[node_name] != declaration (i.e. the declarations
+        are inconsistent).
+    """
+    if node_name in nodename2declaration:
+        existing_declaration = nodename2declaration[node_name]
+        if existing_declaration != declaration:
+            raise ValueError(
+                (
+                    "Node {} has inconsistent declarations: we already saw "
+                    '"{}", but we just saw "{}".'
+                ).format(node_name, existing_declaration, declaration)
+            )
+    else:
+        nodename2declaration[node_name] = declaration
+
+
 def parse_fastg(f):
     """Given a path to a FASTG file, returns a representation of its structure.
 
     Parameters
     ----------
-
     f: str
         Path to a (SPAdes-style) FASTG file.
 
     Returns
     -------
-
     networkx.DiGraph
         A representation of the structure of the input assembly graph.
         This DiGraph can immediately be used with the NetworkX library.
@@ -255,6 +318,14 @@ def parse_fastg(f):
                 "like a FASTG file."
             )
 
+    # Maps the name of a node in our graph (e.g. "1+") to its declaration in
+    # the FASTG file (e.g. "EDGE_1_length_100_cov_20").
+    # Since a node's declaration could be repeated multiple times (e.g. other
+    # edges have outgoing adjacencies to it), we use this dict to ensure that
+    # all instances of a node's declaration are identical. This lets us catch
+    # subtle inconsistencies (e.g. let's say we later see a reference to
+    # "EDGE_1_length_101_cov_20"; why does this have a different length?).
+    nodename2decl = {}
     with open(f, "r") as graph_file:
         for line in graph_file:
             stripped_line = line.strip()
@@ -285,16 +356,30 @@ def parse_fastg(f):
                     )
                 elif colon_ct == 0:
                     # orphaned node or terminal node
-                    curr_node_attrs = extract_node_attrs(line_no_sc)
+                    # The [1:] slices off the starting > character
+                    curr_node_decl = line_no_sc[1:]
+                    curr_node_attrs = extract_node_attrs(curr_node_decl)
+                    update_and_check_decl(
+                        curr_node_attrs["name"], curr_node_decl, nodename2decl
+                    )
                 else:
                     # This node has at least one outgoing edge
                     line_no_sc_split = line_no_sc.split(":")
-                    curr_node_attrs = extract_node_attrs(line_no_sc_split[0])
+                    # The [1:] slices off the starting > character
+                    curr_node_decl = line_no_sc_split[0][1:]
+                    curr_node_attrs = extract_node_attrs(curr_node_decl)
+                    update_and_check_decl(
+                        curr_node_attrs["name"], curr_node_decl, nodename2decl
+                    )
+
+                    # Check outgoing edges
                     curr_node_attrs["outgoing_node_names"] = []
                     for neighbor_decl in line_no_sc_split[1].split(","):
-                        neighbor_name = extract_node_attrs(neighbor_decl)[
-                            "name"
-                        ]
+                        neighbor_attrs = extract_node_attrs(neighbor_decl)
+                        neighbor_name = neighbor_attrs["name"]
+                        update_and_check_decl(
+                            neighbor_name, neighbor_decl, nodename2decl
+                        )
                         curr_node_attrs["outgoing_node_names"].append(
                             neighbor_name
                         )

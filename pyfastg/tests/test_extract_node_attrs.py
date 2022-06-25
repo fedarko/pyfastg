@@ -9,8 +9,8 @@ def test_basic():
     attrs = extract_node_attrs("EDGE_123_length_160_cov_90")
     assert attrs == {"name": "123+", "length": 160, "cov": 90}
 
-    # Check that the > is ok, and that ".5" is interpretable by python
-    attrs = extract_node_attrs(">EDGE_123hi_length_160_cov_.5'")
+    # Check that ".5" is interpretable by python
+    attrs = extract_node_attrs("EDGE_123hi_length_160_cov_.5'")
     assert attrs == {"name": "123hi-", "length": 160, "cov": 0.5}
 
 
@@ -77,6 +77,7 @@ def test_bad_coverage_passes_regex_but_bad_float():
 
 def test_leading_or_trailing_info_not_allowed():
     bad_decls = (
+        ">EDGE_asdf_length_100_cov_29.087'",
         "asdfEDGE_asdf_length_100_cov_29.087'",
         "EDGE_asdf_length_100_cov_29.087'ghij",
         "asdfEDGE_asdf_length_100_cov_29.087'ghij",
