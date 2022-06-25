@@ -72,3 +72,20 @@ def test_parse_stuff_at_start_assembly_graph():
     with pytest.raises(ValueError) as exc_info:
         parse_fastg("pyfastg/tests/input/whitespace_at_start.fastg")
     assert 'File doesn\'t start with a ">" character' in str(exc_info.value)
+
+
+def test_parse_no_rc_assembly_graph():
+    """Tests a graph where A+ -> C-, but not C+ -> A-, exists.
+
+    Ensures that this second edge isn't automatically created.
+
+    Also, this graph has a case where B+ exists but not but B-. This is also
+    ok.
+    """
+    digraph = parse_fastg("pyfastg/tests/input/small_norc.fastg")
+    assert len(digraph.nodes) == 5
+    assert len(digraph.edges) == 2
+
+    assert set(digraph.nodes) == {"1+", "1-", "2+", "3+", "3-"}
+    assert ("1+", "3-") in digraph.edges
+    assert ("1-", "2+") in digraph.edges
