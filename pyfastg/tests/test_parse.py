@@ -1,4 +1,5 @@
 import pytest
+import tempfile
 from pyfastg import parse_fastg
 
 
@@ -194,4 +195,86 @@ def test_parse_multi_graph():
         parse_fastg("pyfastg/tests/input/multi_graph.fastg")
     assert str(exc_info.value) == (
         "Node 1+ has duplicate outgoing adjacencies."
+    )
+
+
+def write_tempfile(text):
+    # yanked from strainflye/tests/utils_for_testing.py
+    fh = tempfile.NamedTemporaryFile(suffix=".fastg")
+    with open(fh.name, "w") as f:
+        f.write(text)
+    return fh
+
+
+def test_parse_whitespace_btwn_adjs():
+    # " , "
+    fh = write_tempfile(
+        """>EDGE_1_length_9_cov_4.5:EDGE_3_length_5_cov_16.5' , EDGE_2_length_3_cov_1;
+ATCGCCCAT
+>EDGE_1_length_9_cov_4.5':EDGE_2_length_3_cov_1';
+ATGGGCGAT
+>EDGE_2_length_3_cov_1:EDGE_1_length_9_cov_4.5;
+CGA
+>EDGE_2_length_3_cov_1';
+TCG
+>EDGE_3_length_5_cov_16.5:EDGE_1_length_9_cov_4.5',EDGE_2_length_3_cov_1';
+GGATC
+>EDGE_3_length_5_cov_16.5':EDGE_2_length_3_cov_1';
+GATCC
+"""
+    )
+    with pytest.raises(ValueError) as ei:
+        parse_fastg(fh.name)
+    assert str(ei.value) == (
+        "Wasn't able to find all expected info (edge name, length, coverage) "
+        'in the declaration "EDGE_3_length_5_cov_16.5\' ". Please remember '
+        "that pyfastg only supports SPAdes-dialect FASTG files."
+    )
+
+    # " ,"
+    fh = write_tempfile(
+        """>EDGE_1_length_9_cov_4.5:EDGE_3_length_5_cov_16.5' ,EDGE_2_length_3_cov_1;
+ATCGCCCAT
+>EDGE_1_length_9_cov_4.5':EDGE_2_length_3_cov_1';
+ATGGGCGAT
+>EDGE_2_length_3_cov_1:EDGE_1_length_9_cov_4.5;
+CGA
+>EDGE_2_length_3_cov_1';
+TCG
+>EDGE_3_length_5_cov_16.5:EDGE_1_length_9_cov_4.5',EDGE_2_length_3_cov_1';
+GGATC
+>EDGE_3_length_5_cov_16.5':EDGE_2_length_3_cov_1';
+GATCC
+"""
+    )
+    with pytest.raises(ValueError) as ei:
+        parse_fastg(fh.name)
+    assert str(ei.value) == (
+        "Wasn't able to find all expected info (edge name, length, coverage) "
+        'in the declaration "EDGE_3_length_5_cov_16.5\' ". Please remember '
+        "that pyfastg only supports SPAdes-dialect FASTG files."
+    )
+
+    # ", "
+    fh = write_tempfile(
+        """>EDGE_1_length_9_cov_4.5:EDGE_3_length_5_cov_16.5', EDGE_2_length_3_cov_1;
+ATCGCCCAT
+>EDGE_1_length_9_cov_4.5':EDGE_2_length_3_cov_1';
+ATGGGCGAT
+>EDGE_2_length_3_cov_1:EDGE_1_length_9_cov_4.5;
+CGA
+>EDGE_2_length_3_cov_1';
+TCG
+>EDGE_3_length_5_cov_16.5:EDGE_1_length_9_cov_4.5',EDGE_2_length_3_cov_1';
+GGATC
+>EDGE_3_length_5_cov_16.5':EDGE_2_length_3_cov_1';
+GATCC
+"""
+    )
+    with pytest.raises(ValueError) as ei:
+        parse_fastg(fh.name)
+    assert str(ei.value) == (
+        "Wasn't able to find all expected info (edge name, length, coverage) "
+        'in the declaration " EDGE_2_length_3_cov_1". Please remember '
+        "that pyfastg only supports SPAdes-dialect FASTG files."
     )
