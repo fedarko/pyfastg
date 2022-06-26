@@ -8,20 +8,21 @@ FASTG is a format for describing sequencing assembly graphs. It is geared toward
 accurately representing the ambiguity resulting from sequencing limitations, ploidy,
 or other factors that complicate representation of a seqence as a simple string.
 
-The official specification for the FASTG format (version 1.00, as of writing)
-can be found [here](http://fastg.sourceforge.net/). Whenever the rest of this
-documentation mentions "the FASTG spec," this is in reference to this version
-of the specification.
+The latest specification for the FASTG format is version 1.00, as of writing;
+this specification is located [here](http://fastg.sourceforge.net/FASTG_Spec_v1.00.pdf).
+Whenever the rest of this documentation mentions "the FASTG spec," this is in reference
+to this version of the specification.
 
-pyfastg parses graphs that follow **a subset of this specification**: in
+pyfastg parses graphs that follow **a subset of the FASTG spec**: in
 particular, pyfastg is designed to work with files output by the
 [SPAdes](http://cab.spbu.ru/software/spades/) family of assemblers.
 
 ## The pyfastg library
-pyfastg contains `parse_fastg()`, a function that accepts as input a path
-to a SPAdes FASTG file. This function reads the specified
-file and returns a [NetworkX](https://networkx.github.io) `DiGraph` object
-representing the structure of the assembly graph.
+pyfastg is a Python library that contains `parse_fastg()`, a function that
+takes as input a path to a SPAdes FASTG file. `parse_fastg()` reads the
+specified FASTG file and returns a [NetworkX](https://networkx.github.io)
+`DiGraph` object representing the structure of the assembly graph. From here, the
+graph can be analyzed, visualized, etc. as needed.
 
 pyfastg is very much in its infancy, so it may be most useful as a starting point.
 Pull requests are welcome!
@@ -38,7 +39,7 @@ be represented as edges in the NetworkX graph.** As far as we're aware, this is
 usually how these files are visualized.
 
 ### Installation
-pyfastg can be installed using pip:
+pyfastg can be installed using [pip](https://pip.pypa.io/):
 
 ```bash
 pip install pyfastg
