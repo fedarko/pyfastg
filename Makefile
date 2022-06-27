@@ -1,7 +1,7 @@
 .PHONY: test stylecheck style
 
 test:
-	python3 -B -m pytest pyfastg/tests/ --cov
+	python3 -B -m pytest pyfastg/tests/ --cov-report xml --cov-report term
 
 stylecheck:
 	flake8 pyfastg
