@@ -155,14 +155,15 @@ anyway in order to support RNA sequences. (`U` and `T` are allowed to be contain
 in the same sequence,
 [in the unlikely case that this is needed](https://en.wikipedia.org/wiki/Uracil#In_DNA).)
 
-Leading and trailing whitespace in sequence lines will be ignored, so something
-like
+Leading and trailing whitespace in sequence lines will be ignored, as will
+blank lines within a sequence. So, something like
 ```bash
+>EDGE_1_length_4_cov_100;
     ATC
 
  G     
 ```
-is technically valid, and describes the sequence `ATCG`.
+is technically valid: this sequence is read as `ATCG`.
 However, a line like `ATC G` is not valid since the inner
 space, ` `, would be considered part of the sequence.
 
