@@ -157,15 +157,24 @@ in the same sequence,
 
 Leading and trailing whitespace in sequence lines will be ignored, as will
 blank lines within a sequence. So, something like
-```bash
+
+```
 >EDGE_1_length_4_cov_100;
     ATC
 
  G     
 ```
+
 is technically valid: this sequence is read as `ATCG`.
-However, a line like `ATC G` is not valid since the inner
-space, ` `, would be considered part of the sequence.
+However, the following example:
+
+```
+>EDGE_1_length_4_cov_100;
+ATC G
+```
+
+is not valid since the inner space between the `C` and the `G`
+would be considered part of the sequence.
 
 ### Details about the output NetworkX graph
 
