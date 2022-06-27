@@ -111,6 +111,9 @@ pyfastg slightly, but (in our opinion) this is worth it.
   non-development dependency of pyfastg is NetworkX. (That being said, we may
   add more dependencies in the future if absolutely necessary.)
 
+- On that note, pinned the minimum NetworkX version to 2. Earlier versions of
+  NetworkX seemed to have problems with pyfastg's use of `.nodes`.
+
 ## pyfastg v0.0.0 (October 14, 2019)
 
 Initial release.
