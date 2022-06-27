@@ -13,19 +13,20 @@ this specification is located [here](http://fastg.sourceforge.net/FASTG_Spec_v1.
 Whenever the rest of this documentation mentions "the FASTG spec," this is in reference
 to this version of the specification.
 
-pyfastg parses graphs that follow **a subset of the FASTG spec**: in
-particular, pyfastg is designed to work with files output by the
-[SPAdes](http://cab.spbu.ru/software/spades/) family of assemblers.
+pyfastg is a Python library designed to parse graphs that follow
+**a subset of the FASTG spec**. In particular, pyfastg is designed to
+work with files output by the [SPAdes](http://cab.spbu.ru/software/spades/)
+family of assemblers.
 
 ## The pyfastg library
-pyfastg is a Python library that contains `parse_fastg()`, a function that
+The pyfastg library contains `parse_fastg()`, a function that
 takes as input a path to a SPAdes FASTG file. `parse_fastg()` reads the
 specified FASTG file and returns a [NetworkX](https://networkx.github.io)
-`DiGraph` object representing the structure of the assembly graph. From here, the
-graph can be analyzed, visualized, etc. as needed.
+`DiGraph` object representing the structure of the assembly graph.
 
-pyfastg is very much in its infancy, so it may be most useful as a starting point.
-Pull requests are welcome!
+Given this NetworkX `DiGraph` object, we can then do whatever we want with the
+assembly graph: analyze it, visualize it, convert it to other formats, etc.
+pyfastg is most useful as a starting point for other applications.
 
 ### Note about the graph topology
 
@@ -33,10 +34,10 @@ The FASTG spec contains the following sentence (in section 6, page 7):
 
 > Note also that strictly speaking, [the structure described in a FASTG file] is not a graph at all, as we have not specified a notion of vertex. However in many cases one can without ambiguity define vertices and thereby associate a _bona fide_ digraph, and we do so frequently in this document to illustrate concepts.
 
-We take this approach in pyfastg. **"Edges" in the FASTG file will be represented as nodes
-in the NetworkX graph, and "adjacencies" between edges in the FASTG file will
-be represented as edges in the NetworkX graph.** As far as we're aware, this is
-usually how these files are visualized.
+We use the following approach to get around this problem: **"edges" in the FASTG file will be represented as nodes in the NetworkX graph produced by pyfastg, and "adjacencies" between edges in the FASTG file will be represented as edges in the NetworkX graph produced by pyfastg.**
+
+As far as we're aware, this "conversion" from edges to nodes matches
+how FASTG files have often been visualized in the past.
 
 ### Installation
 pyfastg can be installed using [pip](https://pip.pypa.io/):
@@ -88,7 +89,7 @@ are not supported.
 
 #### Edge names
 
-In particular, each edge in the file must have a name formatted like:
+Each edge in the file must have a name formatted like:
 
 ```bash
 EDGE_1_length_9909_cov_6.94721
@@ -190,10 +191,13 @@ contains an adjacency from `EDGE_2_length_6_cov_10` to `EDGE_1_length_5_cov_10'`
 
 ## Information for pyfastg developers
 
-### Installation
+Pull requests are welcome! If you're interested in developing pyfastg's code,
+this section provides some instructions for getting started.
 
-If you're interested in developing the code, you will probably want to fork this repository
-and then clone your fork. Once you do this, `cd` into the root of the repository and run
+### Setting up a development "environment" for pyfastg
+
+You will probably want to fork this repository and then clone your fork to your
+computer. Once you do this, `cd` into the root of the repository and run
 
 ```bash
 pip install -e .[dev]
@@ -205,12 +209,16 @@ pyfastg's development dependencies (see the `extras_require` line in
 
 ### Testing, linting, and formatting the code
 
-All of these commands are covered in pyfastg's
-[`Makefile`](https://github.com/fedarko/pyfastg/blob/master/Makefile).
+pyfastg's [`Makefile`](https://github.com/fedarko/pyfastg/blob/master/Makefile)
+contains targets that perform these three tasks:
 
 - Run tests: `make test`
 - Lint and style-check the code: `make stylecheck`
-- Automtaically style the code: `make style`
+- Automatically style the code: `make style`
+
+These targets should all be run from the root of the pyfastg repository. They
+should hopefully be self-explanatory, but let us know if you have
+any questions.
 
 ## Changelog
 See pyfastg's
@@ -220,3 +228,7 @@ for information on the changes included with new pyfastg releases.
 ## License
 pyfastg is licensed under the MIT License. Please see pyfastg's
 [`LICENSE`](https://github.com/fedarko/pyfastg/blob/master/LICENSE) file for details.
+
+## Contact
+The recommended way to get in touch with pyfastg's developers is by
+[opening a GitHub issue](https://github.com/fedarko/pyfastg/issues).
