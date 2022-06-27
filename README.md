@@ -46,7 +46,7 @@ pip install pyfastg
 ```
 
 pyfastg's only dependency (which should be installed automatically with
-the above command) is [NetworkX](https://networkx.github.io).
+the above command) is [NetworkX](https://networkx.github.io) ≥ 2.0.
 
 As of writing, pyfastg supports all Python versions ≥ 3.6. pyfastg might be able to work with earlier versions of Python, but we do not explicitly test against these.
 
