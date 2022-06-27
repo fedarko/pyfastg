@@ -26,7 +26,7 @@ FASTG file and returns a [NetworkX](https://networkx.github.io)
 
 pyfastg is useful as a starting point for other applications.
 Using this NetworkX `DiGraph` object, we can then do whatever we want with the
-assembly graph: analyze it, visualize it, convert it to other formats, etc.
+assembly graph: analyze it, convert it to other formats, visualize it, etc.
 
 ### Note about the graph topology
 
@@ -46,15 +46,17 @@ pyfastg can be installed using [pip](https://pip.pypa.io/):
 pip install pyfastg
 ```
 
-pyfastg's only dependency (which should be installed automatically when running
-the above command) is [NetworkX](https://networkx.github.io). pyfastg requires a
-minimum NetworkX version of 2.
+#### Dependencies
+pyfastg's only direct dependency (which should be installed automatically when
+running the above installation command) is
+[NetworkX](https://networkx.github.io). pyfastg requires a minimum NetworkX
+version of 2.
 
 As of writing, pyfastg supports Python 3.6 and up.
 pyfastg might be able to work with earlier versions of Python,
 but we do not explicitly test against these.
 
-### Quick Example
+### Quick example: using pyfastg to load and analyze an assembly graph
 The second line (which points to one of pyfastg's test assembly graphs)
 assumes that you're located in the root directory of the pyfastg repo.
 
