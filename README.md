@@ -13,19 +13,20 @@ this specification is located [here](http://fastg.sourceforge.net/FASTG_Spec_v1.
 Whenever the rest of this documentation mentions "the FASTG spec," this is in reference
 to this version of the specification.
 
-pyfastg parses graphs that follow **a subset of the FASTG spec**: in
-particular, pyfastg is designed to work with files output by the
-[SPAdes](http://cab.spbu.ru/software/spades/) family of assemblers.
+pyfastg is a Python library designed to parse graphs that follow
+**a subset of the FASTG spec**. In particular, pyfastg is designed to
+work with files output by the [SPAdes](http://cab.spbu.ru/software/spades/)
+family of assemblers.
 
 ## The pyfastg library
-pyfastg is a Python library that contains `parse_fastg()`, a function that
-takes as input a path to a SPAdes FASTG file. `parse_fastg()` reads the
-specified FASTG file and returns a [NetworkX](https://networkx.github.io)
-`DiGraph` object representing the structure of the assembly graph. From here, the
-graph can be analyzed, visualized, etc. as needed.
+The pyfastg library contains `parse_fastg()`, a function that
+takes as input a path to a SPAdes FASTG file. `parse_fastg()` reads this
+FASTG file and returns a [NetworkX](https://networkx.github.io)
+`DiGraph` object representing the structure of the assembly graph.
 
-pyfastg is very much in its infancy, so it may be most useful as a starting point.
-Pull requests are welcome!
+pyfastg is useful as a starting point for other applications.
+Using this NetworkX `DiGraph` object, we can then do whatever we want with the
+assembly graph: analyze it, convert it to other formats, visualize it, etc.
 
 ### Note about the graph topology
 
@@ -33,10 +34,10 @@ The FASTG spec contains the following sentence (in section 6, page 7):
 
 > Note also that strictly speaking, [the structure described in a FASTG file] is not a graph at all, as we have not specified a notion of vertex. However in many cases one can without ambiguity define vertices and thereby associate a _bona fide_ digraph, and we do so frequently in this document to illustrate concepts.
 
-We take this approach in pyfastg. **"Edges" in the FASTG file will be represented as nodes
-in the NetworkX graph, and "adjacencies" between edges in the FASTG file will
-be represented as edges in the NetworkX graph.** As far as we're aware, this is
-usually how these files are visualized.
+We use the following approach to get around this problem: **"edges" in the FASTG file will be represented as nodes in the NetworkX graph produced by pyfastg, and "adjacencies" between edges in the FASTG file will be represented as edges in the NetworkX graph produced by pyfastg.**
+
+As far as we're aware, this "conversion" from edges to nodes matches
+how FASTG files have often been visualized in the past.
 
 ### Installation
 pyfastg can be installed using [pip](https://pip.pypa.io/):
@@ -45,12 +46,17 @@ pyfastg can be installed using [pip](https://pip.pypa.io/):
 pip install pyfastg
 ```
 
-pyfastg's only dependency (which should be installed automatically with
-the above command) is [NetworkX](https://networkx.github.io) ≥ 2.
+#### Dependencies
+pyfastg's only direct dependency (which should be installed automatically when
+running the above installation command) is
+[NetworkX](https://networkx.github.io). pyfastg requires a minimum NetworkX
+version of 2.
 
-As of writing, pyfastg supports all Python versions ≥ 3.6. pyfastg might be able to work with earlier versions of Python, but we do not explicitly test against these.
+As of writing, pyfastg supports Python 3.6 and up.
+pyfastg might be able to work with earlier versions of Python,
+but we do not explicitly test against these.
 
-### Quick Example
+### Quick example: using pyfastg to load and analyze an assembly graph
 The second line (which points to one of pyfastg's test assembly graphs)
 assumes that you're located in the root directory of the pyfastg repo.
 
@@ -88,7 +94,7 @@ are not supported.
 
 #### Edge names
 
-In particular, each edge in the file must have a name formatted like:
+Each edge in the file must have a name formatted like:
 
 ```bash
 EDGE_1_length_9909_cov_6.94721
@@ -105,10 +111,11 @@ this edge is a reverse complement. We will refer to whether or not an edge name
 ends with `'` as its _orientation_: an edge that does not end with a `'` has a
 `+` orientation, and an edge name that ends with a `'` has a `-` orientation.
 
-Edge names in a FASTG file should be consistent, with respect to their ID and orientation.
+All edge names in a FASTG file should be consistent with respect to a given
+ID and orientation.
 If, in a single FASTG file, pyfastg sees a reference to an edge named
 `EDGE_1_length_9909_cov_6.94721` and also a reference to an edge named
-`EDGE_1_length_8109_cov_6.94721` (with the same ID [`1`]
+`EDGE_1_length_9908_cov_6.95` (with the same ID [`1`]
 and orientation [`+`], but a different length and/or coverage)
 then it will throw an error.
 
@@ -148,16 +155,27 @@ anyway in order to support RNA sequences. (`U` and `T` are allowed to be contain
 in the same sequence,
 [in the unlikely case that this is needed](https://en.wikipedia.org/wiki/Uracil#In_DNA).)
 
-Leading and trailing whitespace in sequence lines will be ignored, so something
-like
-```bash
+Leading and trailing whitespace in sequence lines will be ignored, as will
+blank lines within a sequence. So, something like
+
+```
+>EDGE_1_length_4_cov_100;
     ATC
 
  G     
 ```
-is technically valid, and describes the sequence `ATCG`.
-However, a line like `ATC G` is not valid since the inner
-space, ` `, would be considered part of the sequence.
+
+is technically valid: this sequence is read as `ATCG`.
+However, the following example:
+
+```
+>EDGE_1_length_4_cov_100;
+ATC G
+```
+
+is not valid and will cause pyfastg to throw an error.
+This is because the inner space between
+the `C` and the `G` would be read as part of the sequence.
 
 ### Details about the output NetworkX graph
 
@@ -190,10 +208,13 @@ contains an adjacency from `EDGE_2_length_6_cov_10` to `EDGE_1_length_5_cov_10'`
 
 ## Information for pyfastg developers
 
-### Installation
+Pull requests are welcome! If you're interested in developing pyfastg's code,
+this section provides some instructions for getting started.
 
-If you're interested in developing the code, you will probably want to fork this repository
-and then clone your fork. Once you do this, `cd` into the root of the repository and run
+### Setting up a development "environment" for pyfastg
+
+You will probably want to fork this repository and then clone your fork to your
+computer. Once you do this, `cd` into the root of the repository and run
 
 ```bash
 pip install -e .[dev]
@@ -205,12 +226,16 @@ pyfastg's development dependencies (see the `extras_require` line in
 
 ### Testing, linting, and formatting the code
 
-All of these commands are covered in pyfastg's
-[`Makefile`](https://github.com/fedarko/pyfastg/blob/master/Makefile).
+pyfastg's [`Makefile`](https://github.com/fedarko/pyfastg/blob/master/Makefile)
+contains targets that perform these three tasks:
 
 - Run tests: `make test`
 - Lint and style-check the code: `make stylecheck`
-- Automtaically style the code: `make style`
+- Automatically style the code: `make style`
+
+These targets should all be run from the root of the pyfastg repository. They
+should hopefully be self-explanatory, but let us know if you have
+any questions.
 
 ## Changelog
 See pyfastg's
@@ -220,3 +245,7 @@ for information on the changes included with new pyfastg releases.
 ## License
 pyfastg is licensed under the MIT License. Please see pyfastg's
 [`LICENSE`](https://github.com/fedarko/pyfastg/blob/master/LICENSE) file for details.
+
+## Contact
+The recommended way to get in touch with pyfastg's developers is by
+[opening a GitHub issue](https://github.com/fedarko/pyfastg/issues).
