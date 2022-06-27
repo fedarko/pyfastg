@@ -20,13 +20,13 @@ family of assemblers.
 
 ## The pyfastg library
 The pyfastg library contains `parse_fastg()`, a function that
-takes as input a path to a SPAdes FASTG file. `parse_fastg()` reads the
-specified FASTG file and returns a [NetworkX](https://networkx.github.io)
+takes as input a path to a SPAdes FASTG file. `parse_fastg()` reads this
+FASTG file and returns a [NetworkX](https://networkx.github.io)
 `DiGraph` object representing the structure of the assembly graph.
 
-Given this NetworkX `DiGraph` object, we can then do whatever we want with the
+pyfastg is useful as a starting point for other applications.
+Using this NetworkX `DiGraph` object, we can then do whatever we want with the
 assembly graph: analyze it, visualize it, convert it to other formats, etc.
-pyfastg is most useful as a starting point for other applications.
 
 ### Note about the graph topology
 
