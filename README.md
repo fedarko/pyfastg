@@ -101,11 +101,16 @@ The edge length (here, `9909`) can contain the characters `0-9`.
 The edge coverage (here, `6.94721`) can contain the characters `0-9` and `.`.
 
 An edge name can optionally end with a `'` character, indicating that
-this edge's reverse complement is being referenced.
+this edge is a reverse complement. We will refer to whether or not an edge name
+ends with `'` as its _orientation_: an edge that does not end with a `'` has a
+`+` orientation, and an edge name that ends with a `'` has a `-` orientation.
 
-Edge names need to be consistent. If, elsewhere in the FASTG file, we see a
-reference to an edge named `EDGE_1_length_8109_cov_6.94721` (with the same ID
-but a different length and/or coverage), then we'll throw an error.
+Edge names in a FASTG file should be consistent, with respect to their ID and orientation.
+If, in a single FASTG file, pyfastg sees a reference to an edge named
+`EDGE_1_length_9909_cov_6.94721` and also a reference to an edge named
+`EDGE_1_length_8109_cov_6.94721` (with the same ID [`1`]
+and orientation [`+`], but a different length and/or coverage)
+then it will throw an error.
 
 #### Edge declaration lines
 
@@ -122,7 +127,7 @@ the line
 indicates that the edge `EDGE_1_length_5_cov_10` has three outgoing adjacencies: to the
 edges `EDGE_2_length_3_cov_1`, `EDGE_3_length_6_cov_2.5'`, and `EDGE_4_length_8_cov_5.1`.
 This line would thus result in three "edges" being created
-in the NetworkX graph produced by pyfastg: (1+ → 2+), (1+ → 3-), and (1+ → 4+).
+in the NetworkX graph produced by pyfastg: (`1+` → `2+`), (`1+` → `3-`), and (`1+` → `4+`).
 
 Each edge declaration must end with a `;` character (after removing trailing
 whitespace). Section 15 of the FASTG spec mentions that having a newline
@@ -164,21 +169,23 @@ will contain three attribute fields:
 2. `cov`: the coverage of the sequence (represented as a python `float`)
 2. `gc`: the GC-content (in the range [0, 1]) of the sequence (represented as a python `float`)
 
-Furthermore, every node's name will end in `-` if the node is a "reverse
-complement" (i.e. if its declaration in the FASTG file ends in a `'` character) and `+` otherwise.
+Each node's name is a python `str` created by concatenating edge IDs and orientations.
+For example, `EDGE_1_length_9909_cov_6.94721` will correspond to a node named `1+`.
+This naming scheme is analogous to that used by
+[Bandage](https://github.com/rrwick/Bandage/wiki/Single-vs-double-node-style).
 
 #### About reverse complements
 
 pyfastg **only creates nodes based on the edges
 explicitly described in the FASTG file**. If a file only describes edges
 `EDGE_1_length_5_cov_10`, `EDGE_2_length_6_cov_10'`, and `EDGE_3_length_7_cov_15`, then
-pyfastg will only create nodes 1+, 2-, and 3+, and not the reverse complement
-nodes 1-, 2+, 3-, etc.
+pyfastg will only create nodes `1+`, `2-`, and `3+`, and not the reverse complement
+nodes `1-`, `2+`, `3-`, etc.
 
 Similarly, if a file contains an adjacency from edge `EDGE_1_length_5_cov_10` to
 `EDGE_2_length_6_cov_10'`, then this adjacency will only be represented as a single edge
-(1+ → 2-) in pyfastg's output graph. The implied reverse-complement of this
-edge (2+ → 1-) will not be created unless the file explicitly
+(`1+` → `2-`) in pyfastg's output graph. The implied reverse-complement of this
+edge (`2+` → `1-`) will not be created unless the file explicitly
 contains an adjacency from `EDGE_2_length_6_cov_10` to `EDGE_1_length_5_cov_10'`.
 
 ## Information for pyfastg developers
