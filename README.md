@@ -46,7 +46,7 @@ pip install pyfastg
 ```
 
 pyfastg's only dependency (which should be installed automatically with
-the above command) is [NetworkX](https://networkx.github.io).
+the above command) is [NetworkX](https://networkx.github.io) ≥ 2.
 
 As of writing, pyfastg supports all Python versions ≥ 3.6. pyfastg might be able to work with earlier versions of Python, but we do not explicitly test against these.
 
@@ -213,8 +213,10 @@ All of these commands are covered in pyfastg's
 - Automtaically style the code: `make style`
 
 ## Changelog
-See [`CHANGELOG.md`](https://github.com/fedarko/pyfastg/blob/master/CHANGELOG.md) for information on
-the changes included with new pyfastg releases.
+See pyfastg's
+[`CHANGELOG.md`](https://github.com/fedarko/pyfastg/blob/master/CHANGELOG.md) file
+for information on the changes included with new pyfastg releases.
 
 ## License
-pyfastg is licensed under the MIT License. Please see the `LICENSE` file for details.
+pyfastg is licensed under the MIT License. Please see pyfastg's
+[`LICENSE`](https://github.com/fedarko/pyfastg/blob/master/LICENSE) file for details.

@@ -94,7 +94,7 @@ unsupported by pyfastg due to not being part of the general SPAdes FASTG dialect
 ### Performance improvements
 
 N/A. The extra layers of validation added in this version might slow down
-pyfastg slightly, but (in our opinion) this is worth it.
+pyfastg slightly, but (in Marcus' opinion, at least) this is worth it.
 
 ### Development improvements
 - Switched from Travis CI to GitHub Actions ([#3](https://github.com/fedarko/pyfastg/issues/3)).
@@ -110,6 +110,9 @@ pyfastg slightly, but (in our opinion) this is worth it.
   content ([#2](https://github.com/fedarko/pyfastg/issues/2)). Now, the only
   non-development dependency of pyfastg is NetworkX. (That being said, we may
   add more dependencies in the future if absolutely necessary.)
+
+- On that note, pinned the minimum NetworkX version to 2. Earlier versions of
+  NetworkX seemed to have problems with pyfastg's use of `.nodes`.
 
 ## pyfastg v0.0.0 (October 14, 2019)
 

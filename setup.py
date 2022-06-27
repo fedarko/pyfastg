@@ -17,11 +17,9 @@ description = "Minimal Python library for parsing SPAdes FASTG files"
 with open("README.md") as f:
     long_description = f.read()
 
-version = "0.1.0"
-
 setup(
     name="pyfastg",
-    version=version,
+    version="0.1.0",
     license="MIT",
     description=description,
     long_description=long_description,
@@ -32,6 +30,6 @@ setup(
     url="https://github.com/fedarko/pyfastg",
     classifiers=classifiers,
     packages=find_packages(),
-    install_requires=["networkx"],
+    install_requires=["networkx >= 2"],
     extras_require={"dev": ["pytest", "pytest-cov", "flake8", "black"]},
 )
