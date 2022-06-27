@@ -173,8 +173,9 @@ However, the following example:
 ATC G
 ```
 
-is not valid and will cause problems. This is because the inner space between
-the `C` and the `G` would be considered part of the sequence.
+is not valid and will cause pyfastg to throw an error.
+This is because the inner space between
+the `C` and the `G` would be read as part of the sequence.
 
 ### Details about the output NetworkX graph
 
