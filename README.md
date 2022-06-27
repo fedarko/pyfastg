@@ -213,8 +213,10 @@ All of these commands are covered in pyfastg's
 - Automtaically style the code: `make style`
 
 ## Changelog
-See [`CHANGELOG.md`](https://github.com/fedarko/pyfastg/blob/master/CHANGELOG.md) for information on
-the changes included with new pyfastg releases.
+See pyfastg's
+[`CHANGELOG.md`](https://github.com/fedarko/pyfastg/blob/master/CHANGELOG.md) file
+for information on the changes included with new pyfastg releases.
 
 ## License
-pyfastg is licensed under the MIT License. Please see the `LICENSE` file for details.
+pyfastg is licensed under the MIT License. Please see pyfastg's
+[`LICENSE`](https://github.com/fedarko/pyfastg/blob/master/LICENSE) file for details.
