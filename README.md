@@ -99,23 +99,32 @@ The edge ID (here, `1`) can contain the characters `a-z`, `A-Z`, and `0-9`.
 The edge length (here, `9909`) can contain the characters `0-9`.
 
 The edge coverage (here, `6.94721`) can contain the characters `0-9` and `.`.
-(If an edge's coverage contains only these characters but is still invalid
-somehow -- for example, it is something like `1.2.3.4` -- then Python will
-raise an error upon trying to convert this number to a `float`.)
 
 An edge name can optionally end with a `'` character, indicating that
 this edge's reverse complement is being referenced.
+
+Edge names need to be consistent. If, elsewhere in the FASTG file, we see a
+reference to an edge named `EDGE_1_length_8109_cov_6.94721` (with the same ID
+but a different length and/or coverage), then we'll throw an error.
 
 #### Edge declaration lines
 
 Here, we refer to each line starting with `>` as an _edge declaration_. An
 edge's sequence is described in the line(s) following its edge declaration
 (until the next edge declaration); additionally, the outgoing adjacencies from
-this edge to other edges may be described on this line, if present (i.e. the
-line `>EDGE_1_...:EDGE_2...,EDGE_3...,EDGE_4;` indicates that the edge `a` has outgoing adjacencies to edges
-`b`, `c`, and `d`).
+this edge to other edges may be described on this line, if present. For example,
+the line
 
-Each edge declaration must end with a `;` character (after removing
+```
+>EDGE_1_length_5_cov_10:EDGE_2_length_3_cov_1,EDGE_3_length_6_cov_2.5',EDGE_4_length_8_cov_5.1;
+```
+
+indicates that the edge `EDGE_1_length_5_cov_10` has three outgoing adjacencies: to the
+edges `EDGE_2_length_3_cov_1`, `EDGE_3_length_6_cov_2.5'`, and `EDGE_4_length_8_cov_5.1`.
+This line would thus result in three "edges" being created
+in the NetworkX graph produced by pyfastg: (1+ → 2+), (1+ → 3-), and (1+ → 4+).
+
+Each edge declaration must end with a `;` character (after removing trailing
 whitespace). Section 15 of the FASTG spec mentions that having a newline
 after the semicolon isn't required, but we require it here for the sake of
 simplicity.
@@ -162,15 +171,15 @@ complement" (i.e. if its declaration in the FASTG file ends in a `'` character) 
 
 pyfastg **only creates nodes based on the edges
 explicitly described in the FASTG file**. If a file only describes edges
-`EDGE_1_...`, `EDGE_2_...`, and `EDGE_3_...`, then
-pyfastg will only create nodes 1+, 2+, and 3+, and not the reverse complement
-nodes 1-, 2-, 3-, etc.
+`EDGE_1_length_5_cov_10`, `EDGE_2_length_6_cov_10'`, and `EDGE_3_length_7_cov_15`, then
+pyfastg will only create nodes 1+, 2-, and 3+, and not the reverse complement
+nodes 1-, 2+, 3-, etc.
 
-Similarly, if a file contains an adjacency from edge `EDGE_1_...` to
-`EDGE_2_...'`, then this adjacency will only be represented as a single edge
+Similarly, if a file contains an adjacency from edge `EDGE_1_length_5_cov_10` to
+`EDGE_2_length_6_cov_10'`, then this adjacency will only be represented as a single edge
 (1+ → 2-) in pyfastg's output graph. The implied reverse-complement of this
-edge (2+ → 1-) will not be automatically created unless the file explicitly
-contains an adjacency from `EDGE_2_...` to `EDGE_1_...'`.
+edge (2+ → 1-) will not be created unless the file explicitly
+contains an adjacency from `EDGE_2_length_6_cov_10` to `EDGE_1_length_5_cov_10'`.
 
 ## Information for pyfastg developers
 
