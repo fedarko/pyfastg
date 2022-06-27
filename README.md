@@ -30,7 +30,7 @@ FASTG file and returns a [NetworkX](https://networkx.github.io)
 `DiGraph` object representing the structure of the assembly graph.
 
 pyfastg is useful as a starting point for other applications.
-Using this NetworkX `DiGraph` object, we can then do whatever we want with the
+Using this NetworkX `DiGraph` object, we can do whatever we want with the
 assembly graph: analyze it, convert it to other formats, visualize it, etc.
 
 ### Note about the graph topology
