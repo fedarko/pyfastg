@@ -111,10 +111,11 @@ this edge is a reverse complement. We will refer to whether or not an edge name
 ends with `'` as its _orientation_: an edge that does not end with a `'` has a
 `+` orientation, and an edge name that ends with a `'` has a `-` orientation.
 
-Edge names in a FASTG file should be consistent, with respect to their ID and orientation.
+All edge names in a FASTG file should be consistent with respect to a given
+ID and orientation.
 If, in a single FASTG file, pyfastg sees a reference to an edge named
 `EDGE_1_length_9909_cov_6.94721` and also a reference to an edge named
-`EDGE_1_length_8109_cov_6.94721` (with the same ID [`1`]
+`EDGE_1_length_8109_cov_6.95` (with the same ID [`1`]
 and orientation [`+`], but a different length and/or coverage)
 then it will throw an error.
 
