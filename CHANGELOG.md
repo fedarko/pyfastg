@@ -1,8 +1,10 @@
 # pyfastg changelog
 
-## pyfastg v0.1.0 (June 24, 2022)
+## pyfastg v0.1.0 (June 26, 2022)
 
-It's been a while!
+It's been a while! This release includes a fair amount of changes; the bulk of
+these make the parser more strict when dealing with unsupported or malformed
+FASTG files.
 
 ### New features
 - Sequences containing `U` (uracil) are now explicitly allowed. Previously,
@@ -13,19 +15,24 @@ It's been a while!
 - Improved some of the error messages produced when pyfastg encounters
   malformed graphs.
 
-- Added a note to the README to clarify some ambiguities about the terms "edge"
-  and "node."
-
-- Updated various other parts of the README (and various error messages) to be
-  clearer about the fact that the sequences in the input FASTG file are edges,
+- Added information to the README (and various error messages) to be
+  clearer about the fact that the sequences in the input FASTG file are "edges,"
   but are represented as nodes in the output NetworkX graph.
 
-- Update the README to clarify pyfastg's behavior when an edge's implied
+- Updated the README to clarify pyfastg's behavior when an edge's implied
   reverse-complement (e.g. for 1+ → 2-, this would be 2+ → 1-) does not
   explicitly exist in the FASTG file. (The implied edge is not added if it
   isn't described in the FASTG file.)
 
+- Restructured and improved the README in various small ways (e.g. moved
+  the information on pyfastg's dependencies to be alongside the installation
+  instructions).
+  
 ### Backward-incompatible changes
+
+N/A. Some of the ways in which we've made validation more strict might be
+technically "backward-incompatible," but these sorts of situations were already
+unsupported by pyfastg due to not being part of the general SPAdes FASTG dialect.
 
 ### Bug fixes
 - The error thrown upon seeing an invalid declaration was meant to show the
@@ -37,12 +44,12 @@ It's been a while!
   [included](https://github.com/fedarko/pyfastg/blob/3b99ba8624339e3efdc87de1d122e5f401b4537a/pyfastg/pyfastg.py#L43)
   in the set of accepted characters our regular expression used when extracting
    an edge's coverage (e.g. the coverage `12|3.5` would have technically been
-   accepted).
+   accepted by the regular expression).
 
     - This shouldn't have caused any major problems, since [a few lines later](https://github.com/fedarko/pyfastg/blob/3b99ba8624339e3efdc87de1d122e5f401b4537a/pyfastg/pyfastg.py#L60)
       Python would have thrown an error about such a string not being convertible
-      to a float. However, this is now caught further up in this function (the
-      regular expression no longer accepts `|`).
+      to a float. However, this is now caught further up in this function: the
+      regular expression no longer accepts `|`.
 
 - Added checks for rare problems with inconsistent edge declarations.
 
@@ -69,7 +76,7 @@ It's been a while!
       lines where other edges have outgoing adjacencies to this edge). If any
       declarations are inconsistent (e.g. we see `EDGE_1_length_20_cov_5.2` on
       one line, but `EDGE_1_length_20_cov_4.5` on another line), we will raise
-      an error.
+      an error about this inconsistency.
 
 - We now detect and throw an error if an edge has multiple outgoing adjacencies
   to the same edge (e.g. we see a line formatted like `>x:y,z,y`).
@@ -81,7 +88,13 @@ It's been a while!
 
 - Detect and throw an error if an edge declaration line does not end with `;`.
 
+- Detect and throw clear errors where we see syntax associated with certain
+  unsupported things in the FASTG spec (e.g. the `~` or `[]` notations).
+
 ### Performance improvements
+
+N/A. The extra validations added in this version might slow down pyfastg slightly,
+but (in our opinion) this is worth it.
 
 ### Development improvements
 - Switched from Travis CI to GitHub Actions ([#3](https://github.com/fedarko/pyfastg/issues/3)).
@@ -89,6 +102,8 @@ It's been a while!
 - Set up the GitHub Actions CI to test against Python 3.6, 3.7, 3.8, 3.9, 3.10,
   and the latest development version of 3.11. Previously, the CI only checked
   against Python 3.6 and 3.7.
+
+- Added development instructions to the README.
 
 ### Miscellaneous
 - Removed dependency on scikit-bio for validating sequences and computing GC
