@@ -45,6 +45,11 @@ pyfastg can be installed using [pip](https://pip.pypa.io/):
 pip install pyfastg
 ```
 
+pyfastg's only dependency (which should be installed automatically with
+the above command) is [NetworkX](https://networkx.github.io).
+
+As of writing, pyfastg supports all Python versions ≥ 3.6. pyfastg might be able to work with earlier versions of Python, but we do not explicitly test against these.
+
 ### Quick Example
 The second line (which points to one of pyfastg's test assembly graphs)
 assumes that you're located in the root directory of the pyfastg repo.
@@ -167,11 +172,33 @@ Similarly, if a file contains an adjacency from edge `EDGE_1_...` to
 edge (2+ → 1-) will not be automatically created unless the file explicitly
 contains an adjacency from `EDGE_2_...` to `EDGE_1_...'`.
 
-## Dependencies
+## Information for pyfastg developers
 
-- Python ≥ 3.6
-  - (pyfastg might be able to work with earlier versions of Python, but these are not explicitly supported.)
-- [NetworkX](https://networkx.github.io)
+### Installation
+
+If you're interested in developing the code, you will probably want to fork this repository
+and then clone your fork. Once you do this, `cd` into the root of the repository and run
+
+```bash
+pip install -e .[dev]
+```
+
+to install pyfastg in "editable mode." Thanks to the `[dev]` flag, this will also install
+pyfastg's development dependencies (see the `extras_require` line in
+[`setup.py`](https://github.com/fedarko/pyfastg/blob/master/setup.py) for details).
+
+### Testing, linting, and formatting the code
+
+All of these commands are covered in pyfastg's
+[`Makefile`](https://github.com/fedarko/pyfastg/blob/master/Makefile).
+
+- Run tests: `make test`
+- Lint and style-check the code: `make stylecheck`
+- Automtaically style the code: `make style`
+
+## Changelog
+See [`CHANGELOG.md`](https://github.com/fedarko/pyfastg/blob/master/CHANGELOG.md) for information on
+the changes included with new pyfastg releases.
 
 ## License
 pyfastg is licensed under the MIT License. Please see the `LICENSE` file for details.
