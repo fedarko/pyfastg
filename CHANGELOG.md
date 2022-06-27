@@ -93,8 +93,8 @@ unsupported by pyfastg due to not being part of the general SPAdes FASTG dialect
 
 ### Performance improvements
 
-N/A. The extra validations added in this version might slow down pyfastg slightly,
-but (in our opinion) this is worth it.
+N/A. The extra layers of validation added in this version might slow down
+pyfastg slightly, but (in our opinion) this is worth it.
 
 ### Development improvements
 - Switched from Travis CI to GitHub Actions ([#3](https://github.com/fedarko/pyfastg/issues/3)).
