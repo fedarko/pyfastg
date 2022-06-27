@@ -88,7 +88,7 @@ unsupported by pyfastg due to not being part of the general SPAdes FASTG dialect
 
 - Detect and throw an error if an edge declaration line does not end with `;`.
 
-- Detect and throw clear errors where we see syntax associated with certain
+- Detect and throw clear errors if we see syntax associated with certain
   unsupported things in the FASTG spec (e.g. the `~` or `[]` notations).
 
 ### Performance improvements
