@@ -1,7 +1,12 @@
 # pyfastg: a minimal Python library for parsing SPAdes FASTG files
-[![pyfastg CI](https://github.com/fedarko/pyfastg/actions/workflows/main.yml/badge.svg)](https://github.com/fedarko/pyfastg/actions/workflows/main.yml)
-[![Code Coverage](https://codecov.io/gh/fedarko/pyfastg/branch/master/graph/badge.svg)](https://codecov.io/gh/fedarko/pyfastg)
-[![PyPI](https://img.shields.io/pypi/v/pyfastg)](https://pypi.org/project/pyfastg)
+
+<!-- Regarding centering images, see https://gist.github.com/DavidWells/7d2e0e1bc78f4ac59a123ddf8b74932d -->
+<div align="center">
+<a href="https://github.com/fedarko/pyfastg/actions/workflows/main.yml"><img src="https://github.com/fedarko/pyfastg/actions/workflows/main.yml/badge.svg" alt="pyfastg CI" /></a>
+<a href="https://codecov.io/gh/fedarko/pyfastg"><img src="https://codecov.io/gh/fedarko/pyfastg/branch/master/graph/badge.svg" alt="Code Coverage" /></a>
+<a href="https://pypi.org/project/pyfastg"><img src="https://img.shields.io/pypi/v/pyfastg?color=006dad" alt="PyPI" /></a>
+<a href="https://anaconda.org/bioconda/pyfastg"><img src="https://img.shields.io/conda/vn/bioconda/pyfastg.svg?color=43b02a" alt="bioconda" /></a>
+</div>
 
 ## The FASTG file format
 FASTG is a format for describing sequencing assembly graphs. It is geared toward
@@ -40,15 +45,23 @@ As far as we're aware, this "conversion" from edges to nodes matches
 how FASTG files have often been visualized in the past.
 
 ### Installation
-pyfastg can be installed using [pip](https://pip.pypa.io/):
+pyfastg can be installed using [pip](https://pip.pypa.io/) or [conda](https://conda.io/):
+
+#### Installation using pip
 
 ```bash
 pip install pyfastg
 ```
 
+#### Installation using conda
+
+```bash
+conda install -c bioconda pyfastg
+```
+
 #### Dependencies
-pyfastg's only direct dependency (which should be installed automatically when
-running the above installation command) is
+As of writing, pyfastg's only direct dependency (which should be installed
+automatically when running either of the above installation commands) is
 [NetworkX](https://networkx.github.io). pyfastg requires a minimum NetworkX
 version of 2.
 
