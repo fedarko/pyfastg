@@ -115,7 +115,7 @@ All edge names in a FASTG file should be consistent with respect to a given
 ID and orientation.
 If, in a single FASTG file, pyfastg sees a reference to an edge named
 `EDGE_1_length_9909_cov_6.94721` and also a reference to an edge named
-`EDGE_1_length_8109_cov_6.95` (with the same ID [`1`]
+`EDGE_1_length_9908_cov_6.95` (with the same ID [`1`]
 and orientation [`+`], but a different length and/or coverage)
 then it will throw an error.
 
