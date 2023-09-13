@@ -15,8 +15,8 @@ or other factors that complicate representation of a seqence as a simple string.
 
 The latest specification for the FASTG format is version 1.00, as of writing;
 the original FASTG website is down, but
-an archived version of the FASTG v1.00 specification is accessible
-[here](https://web.archive.org/web/20211209213905/http://fastg.sourceforge.net/FASTG_Spec_v1.00.pdf).
+an archived version of the v1.00 specification is
+[accessible here](https://web.archive.org/web/20211209213905/http://fastg.sourceforge.net/FASTG_Spec_v1.00.pdf).
 Whenever the rest of this documentation mentions "the FASTG spec," this is in reference
 to this version of the specification.
 
