@@ -31,5 +31,9 @@ setup(
     classifiers=classifiers,
     packages=find_packages(),
     install_requires=["networkx >= 2"],
-    extras_require={"dev": ["pytest", "pytest-cov", "flake8", "black"]},
+    extras_require={
+        # The black < 22.10 pin is because black 22.10 stopped supporting
+        # python 3.6
+        "dev": ["pytest", "pytest-cov", "flake8", "black < 22.10"]
+    },
 )
