@@ -3,6 +3,25 @@ import tempfile
 from pyfastg import parse_fastg
 
 
+# Represents the second line down of a simple FASTG file; we will add in the
+# "first line" of this file for a few tests later on below. (Adjusting this
+# first line programmatically is easier than writing out, like, five versions
+# of this one file.) For reference, a "correct" first line for this file is
+# >EDGE_1_length_9_cov_4.5:EDGE_3_length_5_cov_16.5',EDGE_2_length_3_cov_1;
+SIMPLE_LINES = """ATCGCCCAT
+>EDGE_1_length_9_cov_4.5':EDGE_2_length_3_cov_1';
+ATGGGCGAT
+>EDGE_2_length_3_cov_1:EDGE_1_length_9_cov_4.5;
+CGA
+>EDGE_2_length_3_cov_1';
+TCG
+>EDGE_3_length_5_cov_16.5:EDGE_1_length_9_cov_4.5',EDGE_2_length_3_cov_1';
+GGATC
+>EDGE_3_length_5_cov_16.5':EDGE_2_length_3_cov_1';
+GATCC
+"""
+
+
 def test_parse_medium_assembly_graph():
     digraph = parse_fastg("pyfastg/tests/input/assembly_graph.fastg")
     assert len(digraph.nodes) == 66
@@ -208,21 +227,11 @@ def write_tempfile(text):
 
 def test_parse_whitespace_btwn_adjs():
     # " , "
-    fh = write_tempfile(
-        """>EDGE_1_length_9_cov_4.5:EDGE_3_length_5_cov_16.5' , EDGE_2_length_3_cov_1;
-ATCGCCCAT
->EDGE_1_length_9_cov_4.5':EDGE_2_length_3_cov_1';
-ATGGGCGAT
->EDGE_2_length_3_cov_1:EDGE_1_length_9_cov_4.5;
-CGA
->EDGE_2_length_3_cov_1';
-TCG
->EDGE_3_length_5_cov_16.5:EDGE_1_length_9_cov_4.5',EDGE_2_length_3_cov_1';
-GGATC
->EDGE_3_length_5_cov_16.5':EDGE_2_length_3_cov_1';
-GATCC
-"""
-    )
+    t = (
+        ">EDGE_1_length_9_cov_4.5:EDGE_3_length_5_cov_16.5' , EDGE_2_length_"
+        "3_cov_1;\n"
+    ) + SIMPLE_LINES
+    fh = write_tempfile(t)
     with pytest.raises(ValueError) as ei:
         parse_fastg(fh.name)
     assert str(ei.value) == (
@@ -232,21 +241,11 @@ GATCC
     )
 
     # " ,"
-    fh = write_tempfile(
-        """>EDGE_1_length_9_cov_4.5:EDGE_3_length_5_cov_16.5' ,EDGE_2_length_3_cov_1;
-ATCGCCCAT
->EDGE_1_length_9_cov_4.5':EDGE_2_length_3_cov_1';
-ATGGGCGAT
->EDGE_2_length_3_cov_1:EDGE_1_length_9_cov_4.5;
-CGA
->EDGE_2_length_3_cov_1';
-TCG
->EDGE_3_length_5_cov_16.5:EDGE_1_length_9_cov_4.5',EDGE_2_length_3_cov_1';
-GGATC
->EDGE_3_length_5_cov_16.5':EDGE_2_length_3_cov_1';
-GATCC
-"""
-    )
+    t = (
+        ">EDGE_1_length_9_cov_4.5:EDGE_3_length_5_cov_16.5' ,EDGE_2_length_"
+        "3_cov_1;\n"
+    ) + SIMPLE_LINES
+    fh = write_tempfile(t)
     with pytest.raises(ValueError) as ei:
         parse_fastg(fh.name)
     assert str(ei.value) == (
@@ -256,21 +255,11 @@ GATCC
     )
 
     # ", "
-    fh = write_tempfile(
-        """>EDGE_1_length_9_cov_4.5:EDGE_3_length_5_cov_16.5', EDGE_2_length_3_cov_1;
-ATCGCCCAT
->EDGE_1_length_9_cov_4.5':EDGE_2_length_3_cov_1';
-ATGGGCGAT
->EDGE_2_length_3_cov_1:EDGE_1_length_9_cov_4.5;
-CGA
->EDGE_2_length_3_cov_1';
-TCG
->EDGE_3_length_5_cov_16.5:EDGE_1_length_9_cov_4.5',EDGE_2_length_3_cov_1';
-GGATC
->EDGE_3_length_5_cov_16.5':EDGE_2_length_3_cov_1';
-GATCC
-"""
-    )
+    t = (
+        ">EDGE_1_length_9_cov_4.5:EDGE_3_length_5_cov_16.5', EDGE_2_length_"
+        "3_cov_1;\n"
+    ) + SIMPLE_LINES
+    fh = write_tempfile(t)
     with pytest.raises(ValueError) as ei:
         parse_fastg(fh.name)
     assert str(ei.value) == (
@@ -282,21 +271,11 @@ GATCC
 
 def test_parse_tilde_before_outgoing_adj_name():
     """These are technically supported in the spec, but we don't allow them."""
-    fh = write_tempfile(
-        """>EDGE_1_length_9_cov_4.5:EDGE_3_length_5_cov_16.5',~EDGE_2_length_3_cov_1;
-ATCGCCCAT
->EDGE_1_length_9_cov_4.5':EDGE_2_length_3_cov_1';
-ATGGGCGAT
->EDGE_2_length_3_cov_1:EDGE_1_length_9_cov_4.5;
-CGA
->EDGE_2_length_3_cov_1';
-TCG
->EDGE_3_length_5_cov_16.5:EDGE_1_length_9_cov_4.5',EDGE_2_length_3_cov_1';
-GGATC
->EDGE_3_length_5_cov_16.5':EDGE_2_length_3_cov_1';
-GATCC
-"""
-    )
+    t = (
+        ">EDGE_1_length_9_cov_4.5:EDGE_3_length_5_cov_16.5',~EDGE_2_length_"
+        "3_cov_1;\n"
+    ) + SIMPLE_LINES
+    fh = write_tempfile(t)
     with pytest.raises(ValueError) as ei:
         parse_fastg(fh.name)
     assert str(ei.value) == (
@@ -308,21 +287,11 @@ def test_parse_brackets_after_outgoing_adj_name():
     """Again, technically supported in the spec, but we don't allow this.
 
     This is a way of encoding adjacency-specific properties."""
-    fh = write_tempfile(
-        """>EDGE_1_length_9_cov_4.5:EDGE_3_length_5_cov_16.5'[prop=val],EDGE_2_length_3_cov_1;
-ATCGCCCAT
->EDGE_1_length_9_cov_4.5':EDGE_2_length_3_cov_1';
-ATGGGCGAT
->EDGE_2_length_3_cov_1:EDGE_1_length_9_cov_4.5;
-CGA
->EDGE_2_length_3_cov_1';
-TCG
->EDGE_3_length_5_cov_16.5:EDGE_1_length_9_cov_4.5',EDGE_2_length_3_cov_1';
-GGATC
->EDGE_3_length_5_cov_16.5':EDGE_2_length_3_cov_1';
-GATCC
-"""
-    )
+    t = (
+        ">EDGE_1_length_9_cov_4.5:EDGE_3_length_5_cov_16.5'[prop=val],EDGE_2_"
+        "length_3_cov_1;\n"
+    ) + SIMPLE_LINES
+    fh = write_tempfile(t)
     with pytest.raises(ValueError) as ei:
         parse_fastg(fh.name)
     assert str(ei.value) == (
