@@ -1,18 +1,26 @@
-# From
-# https://github.com/fedarko/strainFlye/blob/main/.github/workflows/main.yml
+# Adapted from strainFlye and metaLJA's CI workflows
 name: pyfastg CI
 on: [push, pull_request]
 jobs:
   build:
-    # Stopgap solution -- "ubuntu-latest" (22.04, as of writing) no longer
-    # supports Python 3.6. See https://github.com/fedarko/pyfastg/issues/10.
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
         # Gotta specify 3.10 as a string to avoid it being converted to 3.1:
         # https://github.com/actions/setup-python/issues/160
-        python-version: [3.6, 3.7, 3.8, 3.9, "3.10", "3.11"]
+        python-version: [3.6, 3.7, 3.8, 3.9, "3.10", "3.11", "3.12", "3.13"]
+
+    # https://github.com/conda-incubator/setup-miniconda#use-a-default-shell
+    # Use the same shell for all commands here, preserving the "context" of the
+    # conda environment we set up. (This is a lot nicer-looking than prefixing
+    # all of these commands with "conda run -n menv".)
+    #
+    # See https://stackoverflow.com/q/69070754 and 'bash -c "help set"' for details
+    # about what the "-el {0}" means here.
+    defaults:
+      run:
+        shell: bash -el {0}
 
     steps:
 
@@ -20,10 +28,12 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
-      # https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+      # https://github.com/conda-incubator/setup-miniconda#example-3-other-options
+      # From Qurro's "standalone-oldpython" GH Actions workflow
+      - name: Set up a conda environment using Python ${{ matrix.python-version }}
+        uses: conda-incubator/setup-miniconda@v3
         with:
+          activate-environment: pfenv
           python-version: ${{ matrix.python-version }}
 
       - name: Install pyfastg (and its pip dependencies)
