@@ -22,13 +22,13 @@ to this version of the specification.
 
 pyfastg is a Python library designed to parse graphs that follow
 **a subset of the FASTG spec**. In particular, pyfastg is designed to
-work with files output by the [SPAdes](http://cab.spbu.ru/software/spades/)
+work with files output by the [SPAdes](https://ablab.github.io/spades/)
 family of assemblers.
 
 ## The pyfastg library
 The pyfastg library contains `parse_fastg()`, a function that
 takes as input a path to a SPAdes FASTG file. `parse_fastg()` reads this
-FASTG file and returns a [NetworkX](https://networkx.github.io)
+FASTG file and returns a [NetworkX](https://networkx.org/)
 `DiGraph` object representing the structure of the assembly graph.
 
 pyfastg is useful as a starting point for other applications.
@@ -64,7 +64,7 @@ conda install -c bioconda pyfastg
 #### Dependencies
 As of writing, pyfastg's only direct dependency (which should be installed
 automatically when running either of the above installation commands) is
-[NetworkX](https://networkx.github.io). pyfastg requires a minimum NetworkX
+[NetworkX](https://networkx.org/). pyfastg requires a minimum NetworkX
 version of 2.
 
 As of writing, pyfastg supports Python 3.6 and up.
