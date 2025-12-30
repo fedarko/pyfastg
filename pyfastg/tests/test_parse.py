@@ -297,3 +297,12 @@ def test_parse_brackets_after_outgoing_adj_name():
     assert str(ei.value) == (
         "pyfastg does not support the [] notation described in the FASTG spec."
     )
+
+
+def test_parse_diff_seq_same_len():
+    # https://github.com/fedarko/pyfastg/issues/12
+    with pytest.raises(ValueError) as exc_info:
+        parse_fastg("pyfastg/tests/input/diff_seq_same_len.fastg")
+    assert str(exc_info.value) == (
+        "Inconsistent seqs for edge 1+ with GC contents 0.5556 and 1.0000"
+    )

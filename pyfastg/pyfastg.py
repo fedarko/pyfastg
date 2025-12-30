@@ -243,6 +243,24 @@ def add_node_to_digraph(digraph, node_attrs):
         )
     node_gc_content = validate_seq_and_compute_gc(node_attrs["seq"])
     node_name = node_attrs["name"]
+    if node_name in digraph:
+        attrs = digraph.nodes[node_name]
+        if "gc" in attrs and abs(attrs["gc"] - node_gc_content) > 0.0001:
+            # It was possible to give multiple inconsistent sequences of the
+            # same length for a node: see
+            # https://github.com/fedarko/pyfastg/issues/12. To be paranoid,
+            # we check for this here and reject such pathological cases.
+            # (We use a fairly high epsilon for this to avoid floating-point
+            # precision issues.)
+            raise ValueError(
+                (
+                    "Inconsistent seqs for edge {} with GC contents "
+                    "{:.4f} and {:.4f}"
+                ).format(node_name, attrs["gc"], node_gc_content)
+            )
+    # This node might already be in the graph but be missing certain attributes
+    # (e.g. if we already saw it as the target of another edge earlier in the
+    # file), so let's update its attributes in the graph
     digraph.add_node(
         node_name,
         length=node_attrs["length"],
