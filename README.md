@@ -4,8 +4,8 @@
 <div align="center">
 <a href="https://github.com/fedarko/pyfastg/actions/workflows/main.yml"><img src="https://github.com/fedarko/pyfastg/actions/workflows/main.yml/badge.svg" alt="pyfastg CI" /></a>
 <a href="https://codecov.io/gh/fedarko/pyfastg"><img src="https://codecov.io/gh/fedarko/pyfastg/branch/master/graph/badge.svg" alt="Code Coverage" /></a>
-<a href="https://pypi.org/project/pyfastg"><img src="https://img.shields.io/pypi/v/pyfastg?color=006dad" alt="PyPI" /></a>
-<a href="https://anaconda.org/bioconda/pyfastg"><img src="https://img.shields.io/conda/vn/bioconda/pyfastg.svg?color=43b02a" alt="bioconda" /></a>
+<a href="https://pypi.org/project/pyfastg"><img src="https://img.shields.io/pypi/v/pyfastg?color=006dad&labelColor=ffd242" alt="PyPI" /></a>
+<a href="https://anaconda.org/bioconda/pyfastg"><img src="https://img.shields.io/conda/vn/bioconda/pyfastg.svg?color=3eb049&labelColor=005500" alt="bioconda" /></a>
 </div>
 
 ## The FASTG file format
