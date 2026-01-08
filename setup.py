@@ -19,7 +19,7 @@ with open("README.md") as f:
 
 setup(
     name="pyfastg",
-    version="0.2.0",
+    version="0.2.0-dev",
     license="MIT",
     description=description,
     long_description=long_description,
