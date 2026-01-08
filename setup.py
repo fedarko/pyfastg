@@ -19,14 +19,14 @@ with open("README.md") as f:
 
 setup(
     name="pyfastg",
-    version="0.1.0-dev",
+    version="0.2.0"
     license="MIT",
     description=description,
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Nick Waters, Marcus Fedarko",
     maintainer="Marcus Fedarko",
-    maintainer_email="mfedarko@ucsd.edu",
+    maintainer_email="mfedarko@umd.edu",
     url="https://github.com/fedarko/pyfastg",
     classifiers=classifiers,
     packages=find_packages(),
