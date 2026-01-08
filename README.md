@@ -113,13 +113,24 @@ output, please open an issue!)
 
 Each sequence in the file should have a name formatted like:
 
-| SPAdes | MEGAHIT |
-| ------ | ------- |
-| `EDGE_1_length_9909_cov_6.94721` | `NODE_1_length_9909_cov_6.94721_ID_1` |
+<table align="center">
+ <thead>
+  <tr>
+   <th>SPAdes</td>
+   <th>MEGAHIT</td>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>EDGE_1_length_9909_cov_6.94721</code></td>
+   <td><code>NODE_1_length_9909_cov_6.9472_ID_1</code></td>
+  </tr>
+ </tbody>
+</table>
 
-(In MEGAHIT FASTG files, these sequences are referred to as NODEs instead of
-EDGEs. We will keep saying "edge" throughout this README for the sake of
-simplicity.)
+In MEGAHIT FASTG files, these sequences are referred to as `NODE`s instead of
+`EDGE`s. We will keep saying "edge" throughout this documentation for the sake of
+simplicity.
 
 The edge ID (here, `1`) can contain the characters `a-z`, `A-Z`, and `0-9`.
 In MEGAHIT files, there are two IDs included in each name -- one after the
