@@ -1,4 +1,4 @@
-# pyfastg: a minimal Python library for parsing SPAdes FASTG files
+# pyfastg: a minimal Python library for parsing SPAdes-dialect FASTG files
 
 <!-- Regarding centering images, see https://gist.github.com/DavidWells/7d2e0e1bc78f4ac59a123ddf8b74932d -->
 <div align="center">
