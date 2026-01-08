@@ -1,5 +1,35 @@
 # pyfastg changelog
 
+## pyfastg v0.2.0 (January 7, 2026)
+
+### New features
+- Added support for MEGAHIT FASTG files. These files are formatted in almost
+  the exact same way as SPAdes-dialect FASTG files, so the changes were fairly
+  straightforward.
+
+### Documentation
+- Various updates to the README -- e.g. adding a link to the internet archive's
+  version of the FASTG specification, now that the original website is down
+  ([#9](https://github.com/fedarko/pyfastg/issues/9)).
+
+### Bug fixes
+- If the input FASTG file specifies different sequences for an edge that happen
+  to have the same length, then pyfastg will now detect this and defensively
+  raise an error ([#12](https://github.com/fedarko/pyfastg/issues/12)).
+  (It's a very obscure corner case, since you really have to put in a lot of
+  effort to create this kind of bad file...)
+
+### Development improvements
+- Added Python 3.12, 3.13, and 3.14 to the matrix of versions we test against on
+  GitHub Actions.
+
+- Switched to using conda on GitHub Actions to set up our test environment
+  ([#10](https://github.com/fedarko/pyfastg/issues/10)).
+
+- Included `setup.py` in the set of autoformatted code files.
+
+- Tidied up some of the test code.
+
 ## pyfastg v0.1.0 (June 26, 2022)
 
 It's been a while! This release includes a fair amount of changes; the bulk of
