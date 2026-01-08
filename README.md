@@ -1,4 +1,4 @@
-# pyfastg: a minimal Python library for parsing SPAdes-dialect FASTG files
+# pyfastg: a minimal Python library for parsing FASTG files
 
 <!-- Regarding centering images, see https://gist.github.com/DavidWells/7d2e0e1bc78f4ac59a123ddf8b74932d -->
 <div align="center">
@@ -24,7 +24,7 @@ pyfastg is a Python library designed to parse graphs that follow
 **a subset of the FASTG spec**. In particular, pyfastg is designed to
 work with files output by the [SPAdes](https://ablab.github.io/spades/)
 family of assemblers. It also now supports files output by
-[MEGAHIT](https://github.com/voutcn/megahit/wiki/Visualizing-MEGAHIT's-contig-graph)!
+[MEGAHIT](https://github.com/voutcn/megahit)!
 
 ## The pyfastg library
 The pyfastg library contains `parse_fastg()`, a function that
