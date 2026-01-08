@@ -9,8 +9,8 @@
 </div>
 
 ## The FASTG file format
-FASTG is a format for describing sequencing assembly graphs. It is geared toward
-accurately representing the ambiguity resulting from sequencing limitations, ploidy,
+FASTG is a format for describing sequencing assembly graphs. It attempts to
+accurately represent the ambiguity resulting from sequencing limitations, ploidy,
 or other factors that complicate representation of a seqence as a simple string.
 
 The latest specification for the FASTG format is version 1.00, as of writing;
@@ -23,11 +23,12 @@ to this version of the specification.
 pyfastg is a Python library designed to parse graphs that follow
 **a subset of the FASTG spec**. In particular, pyfastg is designed to
 work with files output by the [SPAdes](https://ablab.github.io/spades/)
-family of assemblers.
+family of assemblers. It also now supports files output by
+[MEGAHIT](https://github.com/voutcn/megahit/wiki/Visualizing-MEGAHIT's-contig-graph)!
 
 ## The pyfastg library
 The pyfastg library contains `parse_fastg()`, a function that
-takes as input a path to a SPAdes FASTG file. `parse_fastg()` reads this
+takes as input a path to a FASTG file. `parse_fastg()` reads this
 FASTG file and returns a [NetworkX](https://networkx.org/)
 `DiGraph` object representing the structure of the assembly graph.
 
@@ -103,19 +104,27 @@ NodeView(('1+', '29-', '1-', '6-', '2+', '26+', '27+', '2-', '3+', '4+', '6+', '
 ```
 
 ### Details about the required input file format (tl;dr: SPAdes-dialect FASTG files only)
-Currently, pyfastg is hardcoded to parse FASTG files created by the SPAdes assembler.
-Other valid FASTG files that don't follow the pattern used by SPAdes for edge names
-are not supported.
+Currently, pyfastg is only designed to parse FASTG files created by the SPAdes or MEGAHIT
+assemblers. Other valid FASTG files that don't follow the formats used by SPAdes or
+MEGAHIT are not supported. (If you would like us to add support for a new assembler's
+output, please open an issue!)
 
 #### Edge names
 
-Each edge in the file must have a name formatted like:
+Each sequence in the file should have a name formatted like:
 
-```bash
-EDGE_1_length_9909_cov_6.94721
-```
+| SPAdes | MEGAHIT |
+| ------ | ------- |
+| `EDGE_1_length_9909_cov_6.94721` | `NODE_1_length_9909_cov_6.94721_ID_1` |
+
+(In MEGAHIT FASTG files, these sequences are referred to as NODEs instead of
+EDGEs. We will keep saying "edge" throughout this README for the sake of
+simplicity.)
 
 The edge ID (here, `1`) can contain the characters `a-z`, `A-Z`, and `0-9`.
+In MEGAHIT files, there are two IDs included in each name -- one after the
+`NODE_` and one at the very end of the name (`ID_`). We will only use the
+first one.
 
 The edge length (here, `9909`) can contain the characters `0-9`.
 
@@ -251,6 +260,12 @@ contains targets that perform these three tasks:
 These targets should all be run from the root of the pyfastg repository. They
 should hopefully be self-explanatory, but let us know if you have
 any questions.
+
+## Test data sources
+
+The test data file located in `pyfastg/tests/input/megahit-example.fastg` was
+computed from `k21.contigs.fa`, from
+[this GitHub repository](https://github.com/jraysajulga/megahit-contig2fastg-wrapper).
 
 ## Changelog
 See pyfastg's

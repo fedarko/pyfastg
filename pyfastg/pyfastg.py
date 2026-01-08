@@ -61,7 +61,12 @@ def extract_node_attrs(declaration):
     # saying "capture this group, and also call it 'name'" -- this makes it
     # easy to extract the edge name, length, etc. from the declaration.
     p = re.compile(
-        r"^EDGE_(?P<name>[a-zA-Z\d]+)_length_(?P<length>\d+)_cov_(?P<cov>[\d\.]+)$"  # noqa
+        r"^(EDGE|NODE)_"
+        r"(?P<name>[a-zA-Z\d]+)_"
+        r"length_(?P<length>\d+)_"
+        r"cov_(?P<cov>[\d\.]+)"
+        r"(_ID_[a-zA-Z\d]+)?"
+        r"$"
     )
     m = p.search(nonrc_declaration)
     if m is None:

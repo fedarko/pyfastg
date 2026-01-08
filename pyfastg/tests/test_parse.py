@@ -42,40 +42,46 @@ def test_parse_medium_assembly_graph():
                 assert digraph.nodes[name]["gc"] == 5153 / 9909.0
 
 
+def check_small_assembly_graph(digraph):
+    assert len(digraph.nodes) == 6
+    assert len(digraph.edges) == 8
+    i2length = {1: 9, 2: 3, 3: 5}
+    i2cov = {1: 4.5, 2: 100, 3: 16.5}
+    i2gc = {1: 5 / 9.0, 2: 2 / 3.0, 3: 3 / 5.0}
+    for i in range(1, 4):
+        si = str(i)
+        for suffix in ("+", "-"):
+            name = si + suffix
+            assert name in digraph.nodes
+            assert digraph.nodes[name]["cov"] == i2cov[i]
+            assert digraph.nodes[name]["length"] == i2length[i]
+            assert digraph.nodes[name]["gc"] == i2gc[i]
+
+    valid_edges = (
+        ("2+", "1+"),
+        ("2+", "3-"),
+        ("2+", "3+"),
+        ("1+", "3-"),
+        ("3-", "2-"),
+        ("3+", "1-"),
+        ("3+", "2-"),
+        ("1-", "2-"),
+    )
+    for e in valid_edges:
+        assert e in digraph.edges
+
+
 def test_parse_small_assembly_graph():
-    """Tests a simple manually-created assembly graph.
+    """Tests a simple manually-created assembly graph."""
+    digraph = parse_fastg("pyfastg/tests/input/small.fastg")
+    check_small_assembly_graph(digraph)
 
-    Also tests an identical graph that happens to have a bunch of blank lines
-    around the sequences (shouldn't cause a problem).
-    """
-    for fn in ("small", "whitespace_in_seq"):
-        digraph = parse_fastg("pyfastg/tests/input/{}.fastg".format(fn))
-        assert len(digraph.nodes) == 6
-        assert len(digraph.edges) == 8
-        i2length = {1: 9, 2: 3, 3: 5}
-        i2cov = {1: 4.5, 2: 100, 3: 16.5}
-        i2gc = {1: 5 / 9.0, 2: 2 / 3.0, 3: 3 / 5.0}
-        for i in range(1, 4):
-            si = str(i)
-            for suffix in ("+", "-"):
-                name = si + suffix
-                assert name in digraph.nodes
-                assert digraph.nodes[name]["cov"] == i2cov[i]
-                assert digraph.nodes[name]["length"] == i2length[i]
-                assert digraph.nodes[name]["gc"] == i2gc[i]
 
-        valid_edges = (
-            ("2+", "1+"),
-            ("2+", "3-"),
-            ("2+", "3+"),
-            ("1+", "3-"),
-            ("3-", "2-"),
-            ("3+", "1-"),
-            ("3+", "2-"),
-            ("1-", "2-"),
-        )
-        for e in valid_edges:
-            assert e in digraph.edges
+def test_parse_small_assembly_graph_with_lots_of_blank_lines():
+    """Tests a simple manually-created assembly graph with a bunch of blank
+    lines around the sequences (shouldn't cause a problem)."""
+    digraph = parse_fastg("pyfastg/tests/input/whitespace_in_seq.fastg")
+    check_small_assembly_graph(digraph)
 
 
 def test_parse_multicolon():
@@ -306,3 +312,30 @@ def test_parse_diff_seq_same_len():
     assert str(exc_info.value) == (
         "Inconsistent seqs for edge 1+ with GC contents 0.5556 and 1.0000"
     )
+
+
+def test_parse_megahit():
+    digraph = parse_fastg("pyfastg/tests/input/megahit-example.fastg")
+    assert len(digraph.nodes) == 2
+    assert len(digraph.edges) == 2
+    # + comes before - in the sorted list
+    assert sorted(digraph.nodes) == ["1+", "1-"]
+    assert sorted(digraph.edges) == [("1+", "1+"), ("1-", "1-")]
+
+    assert digraph.nodes["1+"]["length"] == 576
+    assert digraph.nodes["1+"]["cov"] == 0.0
+    assert digraph.nodes["1+"]["gc"] == 314 / 576
+
+    assert digraph.nodes["1-"]["length"] == 576
+    assert digraph.nodes["1-"]["cov"] == 0.0
+    assert digraph.nodes["1-"]["gc"] == 314 / 576
+
+
+def test_parse_small_assembly_graph_megahit():
+    """Same graph small.fastg, but converted to MEGAHIT style.
+
+    Should be parsed identically since everything is the same (besides
+    just changing "EDGE" to "NODE" and adding on the "_ID_" suffixes).
+    """
+    digraph = parse_fastg("pyfastg/tests/input/small-megahit.fastg")
+    check_small_assembly_graph(digraph)

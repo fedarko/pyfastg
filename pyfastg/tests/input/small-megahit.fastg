@@ -1,0 +1,12 @@
+>NODE_1_length_9_cov_4.5_ID_1:NODE_3_length_5_cov_16.5_ID_3';
+ATCGCCCAT
+>NODE_1_length_9_cov_4.5_ID_1':NODE_2_length_3_cov_100_ID_2';
+ATGGGCGAT
+>NODE_2_length_3_cov_100_ID_2:NODE_1_length_9_cov_4.5_ID_1,NODE_3_length_5_cov_16.5_ID_3,NODE_3_length_5_cov_16.5_ID_3';
+CGA
+>NODE_2_length_3_cov_100_ID_2';
+TCG
+>NODE_3_length_5_cov_16.5_ID_3:NODE_1_length_9_cov_4.5_ID_1',NODE_2_length_3_cov_100_ID_2';
+GGATC
+>NODE_3_length_5_cov_16.5_ID_3':NODE_2_length_3_cov_100_ID_2';
+GATCC
