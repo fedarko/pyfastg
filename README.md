@@ -275,7 +275,7 @@ any questions.
 ## Test data sources
 
 The test data file located in `pyfastg/tests/input/megahit-example.fastg` was
-computed from `k21.contigs.fa`, from
+computed using `megahit_core contig2fastg` on `k21.contigs.fa`, a FASTA file from
 [this GitHub repository](https://github.com/jraysajulga/megahit-contig2fastg-wrapper).
 
 ## Changelog
